@@ -2,26 +2,6 @@
 
 A XML Schema file made for Total Miner. Works for both vanilla and modded elements.
 
-## Modded
-
-Currently the Schema has support for the following modded elements:
-
-* `ArrayOfItemXML`
-* `ArrayOfModActorAIDataXML`
-* `ArrayOfModActorPhysicsDataXML`
-* `ArrayOfModActorTypeDataXML`
-* `ArrayOfModDeathMessageXML`
-* `ArrayOfModSpawnRuleXML`
-
-## Vanilla
-
-Currently the Schema has support for the following vanilla elements:
-
-* `ArrayOfActorAIDataXML`
-* `ArrayOfActorPhysicsDataXML`
-* `ArrayOfDeathMessageXML`
-* `ArrayOfPlaylistXML`
-* `ArrayOfSpawnRuleXML`
 
 ## Implementation
 
@@ -35,3 +15,24 @@ When making your XML file, do this to reference the Schema:
 
 <Example/>
 ```
+
+### Modded Elements
+
+Currently the Schema has support for the following modded elements:
+
+* `ArrayOfItemXML`
+* `ArrayOfModActorAIDataXML`
+* `ArrayOfModActorPhysicsDataXML`
+* `ArrayOfModActorTypeDataXML`
+* `ArrayOfModDeathMessageXML`
+* `ArrayOfModSpawnRuleXML`
+
+### Vanilla Elements
+
+Currently the Schema has support for the following vanilla elements:
+
+* `ArrayOfActorAIDataXML`
+* `ArrayOfActorPhysicsDataXML`
+* `ArrayOfDeathMessageXML`
+* `ArrayOfPlaylistXML`
+* `ArrayOfSpawnRuleXML`
