@@ -1,6 +1,76 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<!-- definition of types -->
+	<xs:simpleType name="AttributeDamageType">
+		<xs:restriction base="xs:string">
+				<xs:enumeration value="Blast">
+					<xs:annotation>
+						<xs:documentation>Damage dealt by explosives.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="BlockCollision">
+					<xs:annotation>
+						<xs:documentation>Damage dealt by colliding with blocks (such as `Steel Spikes`.)</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="BlockFallingOnHead">
+					<xs:annotation>
+						<xs:documentation>Damage dealt by falling blocks affected by gravity.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="Burning">
+					<xs:annotation>
+						<xs:documentation>Damage dealt by being set on fire from any source.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="Combat">
+					<xs:annotation>
+						<xs:documentation>Damage dealt through combat encounters with other Actors.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="Drowning">
+					<xs:annotation>
+						<xs:documentation>Damage dealt by drowning (running out of Oxygen) while underwater.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="Effect">
+					<xs:annotation>
+						<xs:documentation>Damage dealt while being effected by an effect.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="Food">
+					<xs:annotation>
+						<xs:documentation>Damage dealt by consuming food with negative health regeneration values.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="Hail">
+					<xs:annotation>
+						<xs:documentation>Damage dealt by hail from the weather.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="ItemUse">
+					<xs:annotation>
+						<xs:documentation>Damage dealt by swinging an item.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="ShieldDeflect">
+					<xs:annotation>
+						<xs:documentation>Damage dealt that was deflected by a Shield item (light-blue damage number.)</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="Sprinting">
+					<xs:annotation>
+						<xs:documentation>Unused Damage Type.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="Unknown">
+					<xs:annotation>
+						<xs:documentation>Damage dealt through other methods not defined.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:simpleType name="ComName">
 		<xs:annotation>
 			<xs:documentation>The name of a Component file. Does not need file extension.</xs:documentation>
@@ -92,6 +162,48 @@
 		<xs:restriction base="PositiveDecimal"/>
 	</xs:simpleType>
 
+	<xs:element name="AttributeLootItemBlockItem" abstract="true"/>
+	<xs:element name="Block" substitutionGroup="AttributeLootItemBlockItem">
+		<xs:annotation>
+			<xs:documentation>The `BlockID` of the Block to drop. Cannot use with `Item`.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Item" substitutionGroup="AttributeLootItemBlockItem">
+		<xs:annotation>
+			<xs:documentation>The `ItemID` of the Item to drop. Cannot use with `Block`.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+
+	<xs:complexType name="AttributeLootItem">
+		<xs:annotation>
+			<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `Entries`.</xs:appinfo>
+			<xs:documentation>An Loot Item Entry for a `LootTable`.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element ref="AttributeLootItemBlockItem" minOccurs="1"/>
+			<xs:element name="Chance" type="PercentInteger" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The chance of the Loot Item occuring.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Count1" type="xs:nonNegativeInteger" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The minimum amount of the Block or Item to drop. Set to the value of `Count2` to guarantee a specific amount.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Count2" type="xs:nonNegativeInteger" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The maximum amount of the Block or Item to drop. Set to the value of `Count1` to guarantee a specific amount.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DamageType" type="AttributeDamageType" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of damage required for the Loot Item to occur. Set to `Unknown` for the Loot Item to occur regardless of Damage Type.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+
 	<!-- definition of simple elements -->
 	<xs:simpleType name="ActorAIBowRange">
 		<xs:annotation>
@@ -138,21 +250,21 @@
 	<xs:simpleType name="ActorPhysicsDataAcceleration">
 		<xs:annotation>
 			<xs:appinfo>Blocks/s = `Acceleration` * 60</xs:appinfo>
-			<xs:documentation>The speed the NPC will move at with a `VelocityModifier` property of 1.<br/>`0.06` is the `Base` Acceleration value and is what a `Player` runs at; the `Player` walks at `0.057` Acceleration value.</xs:documentation>
+			<xs:documentation>The horizonal speed the NPC will move at with a `VelocityModifier` property of 1.<br/>`0.06` is the `Base` Acceleration value and is what a `Player` runs at; the `Player` walks at `0.057` Acceleration value.</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="PositiveDecimal"/>
 	</xs:simpleType>
 
 	<xs:simpleType name="ActorPhysicsDataJumpSpeed">
 		<xs:annotation>
-			<xs:documentation>The speed of a jump the NPC will jump with.<br/>`0.155` is the `Base` Jump Speed and is what a `Player` jumps with.</xs:documentation>
+			<xs:documentation>The vertical speed of a jump the NPC will jump with.<br/>`0.155` is the `Base` Jump Speed and is what a `Player` jumps with.</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="PositiveDecimal"/>
 	</xs:simpleType>
 
 	<xs:simpleType name="ActorPhysicsDataMoveSpeed">
 		<xs:annotation>
-			<xs:documentation>Unused Actor Physics Data.</xs:documentation>
+			<xs:documentation>The maximum horizonal speed the NPC will move at if the `Acceleration` element's value is greater.</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="PositiveDecimal"/>
 	</xs:simpleType>
@@ -404,6 +516,26 @@
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
 
+	<xs:simpleType name="PlaylistName">
+		<xs:annotation>
+			<xs:documentation>The name of the Playlist used in-game</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:complexType name="PlaylistSongs">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `string` within a Playlist. Songs are chosen randomly from the array in-game.<br/>If left blank, the Playlist will not play any music.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="string" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The name of a song that can be played within a Playist.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
 	<xs:simpleType name="SpawnRuleActorType">
 		<xs:annotation>
 			<xs:documentation>The Actor Type that will spawn from the Spawn Rule.</xs:documentation>
@@ -489,7 +621,7 @@
 				<xs:documentation>The comparison of the condition against `Value` to use for `Condition`.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="DamageType" type="AttributeConditionDamageType" use="optional">
+		<xs:attribute name="DamageType" type="AttributeDamageType" use="optional">
 			<xs:annotation>
 				<xs:documentation>The type of damage inflicted in the condition (if any.)</xs:documentation>
 			</xs:annotation>
@@ -543,16 +675,26 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="Condition" type="AttributeCondition" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="Drop" type="AttributeDrop" minOccurs="1" maxOccurs="unbounded"/>
+			<xs:element name="Drop" type="AttributeDrop" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute name="ID" type="NonEmptyString" use="required">
 			<xs:annotation>
 				<xs:documentation>The ID of the `DropEntry`. If the `ID` is not unique, it'll overwrite the Drop Entry with the same `ID`.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="Modify" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>If `true`, then the `DropEntry` will not be overwritten and only added onto.<br/>Works only if the `LootTable` parent has the `Modify="true"` attribute.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="PercentChance" type="PercentInteger" use="required">
 			<xs:annotation>
 				<xs:documentation>The chance of the Drop Entry occuring.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Remove" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>If `true`, then the `DropEntry` will be overwritten as if it wasn't being modified.<br/>Works only if the `LootTable` parent has the `Modify="true"` attribute.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute name="RollCount" use="required">
@@ -571,15 +713,21 @@
 		<xs:sequence>
 			<xs:element name="Entries" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
-					<xs:documentation>An array that contains one or more of `DropEntry`.</xs:documentation>
+					<xs:documentation>An array that contains `DropEntry`.</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="DropEntry" type="AttributeDropEntry" minOccurs="1" maxOccurs="unbounded"/>
+						<xs:element name="DropEntry" type="AttributeDropEntry" minOccurs="0" maxOccurs="unbounded"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="LootItem" type="AttributeLootItem" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
+		<xs:attribute name="Modify" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>If `true`, then any `DropEntry` IDs not specified in the `Entries` will not be affected.<br/>This allows you to add or overwrite specific IDs without affecting other ones.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
 
 	<!-- definition of attributes -->
@@ -621,76 +769,6 @@
 					<xs:documentation>If the compared `Type` is not equal to `Value`.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
-		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="AttributeConditionDamageType">
-		<xs:restriction base="xs:string">
-				<xs:enumeration value="Blast">
-					<xs:annotation>
-						<xs:documentation>Damage dealt by explosives.</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="BlockCollision">
-					<xs:annotation>
-						<xs:documentation>Damage dealt by colliding with blocks (such as `Steel Spikes`.)</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="BlockFallingOnHead">
-					<xs:annotation>
-						<xs:documentation>Damage dealt by falling blocks affected by gravity.</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="Burning">
-					<xs:annotation>
-						<xs:documentation>Damage dealt by being set on fire from any source.</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="Combat">
-					<xs:annotation>
-						<xs:documentation>Damage dealt through combat encounters with other Actors.</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="Drowning">
-					<xs:annotation>
-						<xs:documentation>Damage dealt by drowning (running out of Oxygen) while underwater.</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="Effect">
-					<xs:annotation>
-						<xs:documentation>Damage dealt while being effected by an effect.</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="Food">
-					<xs:annotation>
-						<xs:documentation>Damage dealt by consuming food with negative health regeneration values.</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="Hail">
-					<xs:annotation>
-						<xs:documentation>Damage dealt by hail from the weather.</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="ItemUse">
-					<xs:annotation>
-						<xs:documentation>Damage dealt by swinging an item.</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="ShieldDeflect">
-					<xs:annotation>
-						<xs:documentation>Damage dealt that was deflected by a Shield item (light-blue damage number.)</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="Sprinting">
-					<xs:annotation>
-						<xs:documentation>Unused Damage Type.</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
-				<xs:enumeration value="Unknown">
-					<xs:annotation>
-						<xs:documentation>Damage dealt through other methods not defined.</xs:documentation>
-					</xs:annotation>
-				</xs:enumeration>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -972,7 +1050,7 @@
 		<xs:all>
 			<xs:element name="ActorAIType" type="NonEmptyString" minOccurs="1">
 				<xs:annotation>
-					<xs:documentation>The ID of the `ModActorAIDataXML`. If the `ID` is not unique, it'll overwrite the Death Message with the same `ID`.</xs:documentation>
+					<xs:documentation>The ID of the `ModActorAIDataXML`. If the `ID` is not unique, it'll overwrite the Actor AI Data with the same `ID`.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="StrikeDelay" type="ActorAIStrikeDelay" minOccurs="0"/>
@@ -1003,13 +1081,13 @@
 		<xs:all>
 			<xs:element name="ActorPhysicsType" type="NonEmptyString" minOccurs="1">
 				<xs:annotation>
-					<xs:documentation>The ID of the `ModActorPhysicsDataXML`. If the `ID` is not unique, it'll overwrite the Death Message with the same `ID`.</xs:documentation>
+					<xs:documentation>The ID of the `ModActorPhysicsDataXML`. If the `ID` is not unique, it'll overwrite the Actor Physics Data with the same `ID`.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="Acceleration" type="ActorPhysicsDataAcceleration" minOccurs="1"/>
-			<xs:element name="MoveSpeed" type="ActorPhysicsDataMoveSpeed" minOccurs="1"/>
-			<xs:element name="JumpSpeed" type="ActorPhysicsDataJumpSpeed" minOccurs="1"/>
-			<xs:element name="RotateSpeed" type="ActorPhysicsDataRotateSpeed" minOccurs="1"/>
+			<xs:element name="Acceleration" type="ActorPhysicsDataAcceleration" minOccurs="0"/>
+			<xs:element name="MoveSpeed" type="ActorPhysicsDataMoveSpeed" minOccurs="0"/>
+			<xs:element name="JumpSpeed" type="ActorPhysicsDataJumpSpeed" minOccurs="0"/>
+			<xs:element name="RotateSpeed" type="ActorPhysicsDataRotateSpeed" minOccurs="0"/>
 		</xs:all>
 	</xs:complexType>
 
@@ -1107,12 +1185,17 @@
 				</xs:element>
 				<xs:element name="Desc" type="xs:string" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>The description of the mod shown in-game.</xs:documentation>
+						<xs:documentation>The description of the mod shown.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element name="Author" type="xs:string" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>The author of the mod shown in-game.</xs:documentation>
+						<xs:documentation>The author of the mod shown in-game in the mod information.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Website" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>A website link shown in-game in the mod information.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element name="Icon" type="xs:string" minOccurs="0">
@@ -1156,7 +1239,7 @@
 		<xs:all>
 			<xs:element name="ActorAIType" type="NonEmptyString" minOccurs="1">
 				<xs:annotation>
-					<xs:documentation>The ID of the `ActorAIDataXML`. If the `ID` is not unique, it'll overwrite the Death Message with the same `ID`.</xs:documentation>
+					<xs:documentation>The ID of the `ActorAIDataXML`. If the `ID` is not unique, it'll overwrite the Actor AI Data with the same `ID`.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="StrikeDelay" type="ActorAIStrikeDelay" minOccurs="0"/>
@@ -1187,13 +1270,13 @@
 		<xs:all>
 			<xs:element name="ActorPhysicsType" type="NonEmptyString" minOccurs="1">
 				<xs:annotation>
-					<xs:documentation>The ID of the `ActorPhysicsDataXML`. If the `ID` is not unique, it'll overwrite the Death Message with the same `ID`.</xs:documentation>
+					<xs:documentation>The ID of the `ActorPhysicsDataXML`. If the `ID` is not unique, it'll overwrite the Actor Physics Data with the same `ID`.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="Acceleration" type="ActorPhysicsDataAcceleration" minOccurs="1"/>
-			<xs:element name="MoveSpeed" type="ActorPhysicsDataMoveSpeed" minOccurs="1"/>
-			<xs:element name="JumpSpeed" type="ActorPhysicsDataJumpSpeed" minOccurs="1"/>
-			<xs:element name="RotateSpeed" type="ActorPhysicsDataRotateSpeed" minOccurs="1"/>
+			<xs:element name="Acceleration" type="ActorPhysicsDataAcceleration" minOccurs="0"/>
+			<xs:element name="MoveSpeed" type="ActorPhysicsDataMoveSpeed" minOccurs="0"/>
+			<xs:element name="JumpSpeed" type="ActorPhysicsDataJumpSpeed" minOccurs="0"/>
+			<xs:element name="RotateSpeed" type="ActorPhysicsDataRotateSpeed" minOccurs="0"/>
 		</xs:all>
 	</xs:complexType>
 
@@ -1235,25 +1318,8 @@
 			<xs:documentation>Vanilla Playlists that allows for customizable music playlists.</xs:documentation>
 		</xs:annotation>
 		<xs:all>
-			<xs:element name="Name" type="xs:string" minOccurs="1">
-				<xs:annotation>
-					<xs:documentation>The name of the Playlist used in-game.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="Songs" minOccurs="1">
-				<xs:annotation>
-					<xs:documentation>An array that contains one or more of `string` within a Playlist.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="string" type="xs:string" minOccurs="0" maxOccurs="unbounded">
-							<xs:annotation>
-								<xs:documentation>The name of a song that can be played within a Playist.</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
+			<xs:element name="Name" type="PlaylistName" minOccurs="1"/>
+			<xs:element name="Songs" type="PlaylistSongs" minOccurs="1"/>
 		</xs:all>
 	</xs:complexType>
 
