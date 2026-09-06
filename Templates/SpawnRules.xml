@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/galactic2005/TMSchema/refs/heads/main/TMSchema.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<ArrayOfModSpawnRuleXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ModSpawnRuleXML ID="ActorTypeSpawnRule">
+		<IsValid>true</IsValid>
+
+		<!-- Spawn Rule spawning data -->
+		<ActorType>ActorType</ActorType>
+    	<Frequency>5</Frequency>
+    	<SpawnCap>10</SpawnCap>
+    	<GroupSize>1</GroupSize>
+
+		<!-- Spawn Rule condition data -->
+    	<Time>None</Time>
+		<ShouldDespawn>false</ShouldDespawn>
+		<Chance>100</Chance>
+		<Condition Type="All">
+			<Condition Type="GameMode" Value="DigDeep"/>
+			<Condition Type="Any">
+				<Condition Type="IsBlock" Value="Grass"/>
+				<Condition Type="IsBlock" Value="Dirt"/>
+				<Condition Type="IsBlock" Value="Basalt"/>
+			</Condition>
+			<Condition Type="SkyLight" Comparison="GreaterThan" Value="10" />
+		</Condition>
+	</ModSpawnRuleXML>
+</ArrayOfModSpawnRuleXML>

@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/galactic2005/TMSchema/refs/heads/main/TMSchema.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<ArrayOfModActorTypeDataXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ModActorTypeDataXML>
+		<!-- Actor Type data -->
+		<IsValid>true</IsValid>
+		<ActorType>ActorType</ActorType>
+		<LevelType>ActorType</LevelType>
+		<PhysicsType>ActorType</PhysicsType>
+		<AIType>ActorType</AIType>
+		<BoundsType>ActorType</BoundsType>
+		<NaturalBehaviour>System\AI\Default</NaturalBehaviour>
+
+		<!-- Actor Type animation and appearance -->
+		<Name>Actor Name</Name>
+		<NameArticle>A</NameArticle>
+		<NPCText>Who goes there? Oh, it's just you modder.</NPCText>
+		<IdleKeyframes>
+			<ComName>Actor</ComName>
+		</IdleKeyframes>
+		<CrouchIdleKeyframes>
+			<ComName>Actor_Crouch</ComName>
+		</CrouchIdleKeyframes>
+		<WalkKeyframes>
+			<ComName>Actor_Walk1</ComName>
+			<ComName>Actor_Walk2</ComName>
+			<ComName>Actor_Walk3</ComName>
+			<ComName>Actor_Walk4</ComName>
+		</WalkKeyframes>
+		<CrouchWalkKeyframes>
+			<ComName>Actor_CrouchWalk1</ComName>
+			<ComName>Actor_CrouchWalk2</ComName>
+			<ComName>Actor_CrouchWalk3</ComName>
+			<ComName>Actor_CrouchWalk4</ComName>
+		</CrouchWalkKeyframes>
+		<ModelHeight>1.92</ModelHeight>
+		<ModelYRotation>0</ModelYRotation>
+
+		<!-- Actor Type data -->
+		<CanBreatheUnderwater>false</CanBreatheUnderwater>
+		<HasNameplate>true</HasNameplate>
+		<IsFemale>false</IsFemale>
+		<IsImmuneToSpikes>false</IsImmuneToSpikes>
+		<IsMobile>false</IsMobile>
+		<IsPassive>false</IsPassive>
+		<ShowHitboxes>false</ShowHitboxes>
+		<FireResistance>0</FireResistance>
+		<IceResistance>0</IceResistance>
+		<HandMaxHit>0</HandMaxHit>
+
+		<!-- explode blocks data -->
+		<ExplodeBlocksRatio>0.04</ExplodeBlocksRatio>
+		<ExplodeBlocksScale>
+			<X>1.90</X>
+			<Y>2.40</Y>
+		</ExplodeBlocksScale>
+
+		<!-- offsets data -->
+		<EyeOffset>
+			<X>0.00</X>
+			<Y>0.00</Y>
+			<Z>0.00</Z>
+		</EyeOffset>
+		<StrikePointOffset>
+			<X>0.00</X>
+			<Y>1.00</Y>
+			<Z>0.00</Z>
+		</StrikePointOffset>
+		<ItemModelOffset>
+			<X>0.00</X>
+			<Y>0.00</Y>
+			<Z>0.00</Z>
+		</ItemModelOffset>
+
+		<!-- loot table data -->
+		<LootTable>
+			<Entries>
+				<DropEntry ID="LootDataEntry1" PercentChance="100" RollCount="1">
+					<Condition Type="All">
+						<Condition Type="GameMode" Value="Creative"/>
+						<Condition Type="DamageType" DamageType="Combat" Value="true"/>
+					</Condition>
+					<Drop ItemID="Sledgehammer" Min="1" Max="1" Weight="1" />
+				</DropEntry>
+
+				<DropEntry ID="LootDataEntry2" PercentChance="100" RollCount="3">
+					<Condition Type="All">
+						<Condition Type="GameMode" Value="Survival"/>
+						<Condition Type="DamageType" DamageType="Combat" Value="true"/>
+					</Condition>
+					<Drop ItemID="GoldPieces" Min="100" Max="300" Weight="5" />
+					<Drop ItemID="Coal" Min="1" Max="3" Weight="3" />
+					<Drop ItemID="Wood" Min="1" Max="5" Weight="1" />
+				</DropEntry>
+			</Entries>
+		</LootTable>
+	</ModActorTypeDataXML>
+</ArrayOfModActorTypeDataXML>

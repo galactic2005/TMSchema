@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/galactic2005/TMSchema/refs/heads/main/TMSchema.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<ArrayOfModActorPhysicsDataXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ModActorPhysicsDataXML>
+		<ActorPhysicsType>ActorType</ActorPhysicsType>
+
+		<!-- Actor Type physics data -->
+		<Acceleration>0.57</Acceleration>
+		<MoveSpeed>0.57</MoveSpeed>
+		<JumpSpeed>0.155</JumpSpeed>
+		<RotateSpeed>0.1</RotateSpeed>
+	</ModActorPhysicsDataXML>
+</ArrayOfModActorPhysicsDataXML>

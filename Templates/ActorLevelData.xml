@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/galactic2005/TMSchema/refs/heads/main/TMSchema.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<ArrayOfModActorLevelDataXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ModActorLevelData>
+		<ActorLevelType>ActorType</ActorLevelType>
+
+		<!-- Actor Type combat stats data -->
+		<HealthLevel>1</HealthLevel>
+		<AttackLevel>50</AttackLevel>
+		<StrengthLevel>1</StrengthLevel>
+		<DefenceLevel>1</DefenceLevel>
+		<RangedLevel>1</RangedLevel>
+	</ModActorLevelData>
+</ArrayOfModActorLevelDataXML>

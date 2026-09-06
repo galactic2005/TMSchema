@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/galactic2005/TMSchema/refs/heads/main/TMSchema.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<ArrayOfModActorAIDataXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ModActorAIDataXML>
+		<ActorAIType>ActorType</ActorAIType>
+
+		<!-- Actor Type combat AI data -->
+		<StrikeDelay>1.0</StrikeDelay>
+		<StrikeRange>1.0</StrikeRange>
+		<BowRange>25</BowRange>
+
+		<!-- Actor Type range AI data -->
+		<RegardRange>25</RegardRange>
+		<HearingRange>50</HearingRange>
+		<InactiveRange>300</InactiveRange>
+	</ModActorAIDataXML>
+</ArrayOfModActorAIDataXML>

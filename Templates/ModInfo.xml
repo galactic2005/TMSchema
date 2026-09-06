@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/galactic2005/TMSchema/refs/heads/main/TMSchema.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<ModInfoXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ID>username.modNameLocal</ID>
+	<WorkshopID>username.modNameWorkshop</WorkshopID>
+	<Name>Mod Name</Name>
+	<Desc>This is a certified Mod Description.</Desc>
+	<Author>username</Author>
+	<Icon>icon.png</Icon>
+	<Website>https://github.com/galactic2005/TMSchema</Website>
+	<Version>
+		<Major>1</Major>
+		<Minor>0</Minor>
+		<Patch>0</Patch>
+	</Version>
+</ModInfoXML>
