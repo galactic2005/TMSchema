@@ -71,6 +71,24 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:simpleType name="BoundaryHeight">
+		<xs:annotation>
+			<xs:documentation>The height of a Boundary or Collision Box.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:decimal">
+			<xs:minInclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="BoundaryWidth">
+		<xs:annotation>
+			<xs:documentation>The width of a Boundary or Collision Box.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:decimal">
+			<xs:minInclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:simpleType name="ComName">
 		<xs:annotation>
 			<xs:documentation>The name of a Component file. Does not need file extension.</xs:documentation>
@@ -81,6 +99,14 @@
 	<xs:simpleType name="NonEmptyString">
 		<xs:restriction base="xs:string">
 			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NonSpaceString">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:pattern value="[^ ]*"/>
+			<xs:whiteSpace value="replace"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -111,8 +137,23 @@
 		</xs:all>
 	</xs:complexType>
 
+	<xs:complexType name="Vector2Optional">
+		<xs:all minOccurs="0">
+			<xs:element name="X" type="xs:float"/>
+			<xs:element name="Y" type="xs:float"/>
+		</xs:all>
+	</xs:complexType>
+
 	<xs:complexType name="Vector3">
 		<xs:all>
+			<xs:element name="X" type="xs:float" minOccurs="1"/>
+			<xs:element name="Y" type="xs:float" minOccurs="1"/>
+			<xs:element name="Z" type="xs:float" minOccurs="1"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="Vector3Optional">
+		<xs:all minOccurs="0">
 			<xs:element name="X" type="xs:float" minOccurs="1"/>
 			<xs:element name="Y" type="xs:float" minOccurs="1"/>
 			<xs:element name="Z" type="xs:float" minOccurs="1"/>
@@ -122,7 +163,7 @@
 	<!-- definition of depreciated elements -->
 	<xs:simpleType name="ActorAIAttackRange">
 		<xs:annotation>
-			<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Use `BowRange`, `StrikeRange`, or items with a Range parameter.</xs:appinfo>
+			<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Use `BowRange` for Bow items, `StrikeRange` for the NPC's hand, or items with a Range parameter.</xs:appinfo>
 			<xs:documentation>Unused Actor AI Data.</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:nonNegativeInteger"/>
@@ -131,7 +172,7 @@
 	<xs:simpleType name="ActorTypeDataComName">
 		<xs:annotation>
 			<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `IdleKeyframes`.</xs:appinfo>
-			<xs:documentation>Unused Actor Type Component Data.</xs:documentation>
+			<xs:documentation>Unused Actor Type Component Data.<br/>Used to be an array that contains one or more of `ComName` for the Actor Type's `Idle` animation.</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
@@ -139,7 +180,7 @@
 	<xs:complexType name="ActorTypeDataComNameWalk">
 		<xs:annotation>
 			<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `WalkKeyframes`.</xs:appinfo>
-			<xs:documentation>Unused Actor Type Component Data.</xs:documentation>
+			<xs:documentation>Unused Actor Type Component Data.<br/>Used to be an array that contains one or more of `ComName` for the Actor Type's `Walk` animation.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="ComName" type="ComName" minOccurs="0" maxOccurs="unbounded"/>
@@ -148,7 +189,7 @@
 
 	<xs:simpleType name="ActorTypeDataIsImmuneToFire">
 		<xs:annotation>
-			<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `FireResistance`; set `FireResistance` to `100` to achieve the same effect.</xs:appinfo>
+			<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `FireResistance`; set `FireResistance` to `100` to achieve the same effect.<br/>Used to be an element that if `true`, the Actor Type will be immune to the Fire effect.</xs:appinfo>
 			<xs:documentation>Unused Actor Type Data.</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:boolean"/>
@@ -181,12 +222,12 @@
 		</xs:annotation>
 		<xs:all>
 			<xs:element ref="AttributeLootItemBlockItem" minOccurs="1"/>
-			<xs:element name="Chance" type="PercentInteger" minOccurs="1">
+			<xs:element name="Chance" type="PercentInteger" minOccurs="0">
 				<xs:annotation>
-					<xs:documentation>The chance of the Loot Item occuring.</xs:documentation>
+					<xs:documentation>The percent chance of the Loot Item occuring.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="Count1" type="xs:nonNegativeInteger" minOccurs="1">
+			<xs:element name="Count1" type="xs:nonNegativeInteger" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>The minimum amount of the Block or Item to drop. Set to the value of `Count2` to guarantee a specific amount.</xs:documentation>
 				</xs:annotation>
@@ -196,13 +237,35 @@
 					<xs:documentation>The maximum amount of the Block or Item to drop. Set to the value of `Count1` to guarantee a specific amount.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="DamageType" type="AttributeDamageType" minOccurs="1">
+			<xs:element name="Damage" type="AttributeDamageType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `DamageType`.</xs:appinfo>
+					<xs:documentation>The type of damage required for the Loot Item to occur. Set to `Unknown` for the Loot Item to occur regardless of Damage Type.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DamageType" type="AttributeDamageType" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>The type of damage required for the Loot Item to occur. Set to `Unknown` for the Loot Item to occur regardless of Damage Type.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="Percent" type="PercentInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `Chance`.</xs:appinfo>
+					<xs:documentation>The percent chance of the Loot Item occuring.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:all>
 	</xs:complexType>
+
+	<xs:simpleType name="ModInfoXMLDepreciatedVersion">
+		<xs:annotation>
+			<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Use the `Major`, `Minor` and `Patch` child elements.</xs:appinfo>
+			<xs:documentation>The version of the mod shown in-game. If not used, it will be shown as version `1.0.0.0`. Uses <a href="https://semver.org/">Systemic Versioning</a>.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:nonNegativeInteger">
+			<xs:totalDigits value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
 
 	<!-- definition of simple elements -->
 	<xs:simpleType name="ActorAIBowRange">
@@ -247,6 +310,99 @@
 		<xs:restriction base="PositiveDecimal"/>
 	</xs:simpleType>
 
+	<xs:simpleType name="ActorAudioAudioDeath">
+		<xs:annotation>
+			<xs:documentation>The sound effect that plays when the Actor Type dies from any source.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ActorAudioAudioPain">
+		<xs:annotation>
+			<xs:documentation>The sound effect that plays when the Actor Type takes damage.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ActorAudioAudioStrike">
+		<xs:annotation>
+			<xs:documentation>Unused Actor Audio Data.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ActorAudioAudioWarning">
+		<xs:annotation>
+			<xs:documentation>The sound effect that plays when the Actor Type warns a target.<br/>Currently only used in vanilla for milking a cow NPC.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:complexType name="ModActorBoundsDataCollisionBoxSize">
+		<xs:annotation>
+			<xs:documentation>The size of an Actor Type's Collision Box during almost all states.<br/>When an Actor Type or NPC shows their hitboxes, Collision Boxes are colored green.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="Height" type="BoundaryHeight" use="optional"/>
+		<xs:attribute name="Width" type="BoundaryWidth" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name="ModActorBoundsDataCrouchCollisionBoxSize">
+		<xs:annotation>
+			<xs:documentation>The size of an Actor Type's Collision Box when crouched. NPCs cannot crouch, so this is only used by Players.<br/>When an Actor Type or NPC shows their hitboxes, Collision Boxes are colored green.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="Height" type="BoundaryHeight" use="optional"/>
+		<xs:attribute name="Width" type="BoundaryWidth" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name="ModActorBoundsDataHitBounds">
+		<xs:annotation>
+			<xs:documentation>The Boundaries of an Actor Type. Used for hit detection.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Bound" type="HitBoundsBound" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>`<![CDATA[&lt;Bound DamageMultiplier="Decimal" IsCritical="Boolean"&gt;]]>`</xs:appinfo>
+					<xs:documentation>A Boundary of an Actor Type. When an Actor Type or NPC shows their hitboxes, Normal Boundary Boxes are colored yellow.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="ActorLevelDataAttackLevel">
+		<xs:annotation>
+			<xs:documentation>The Attack Combat Stat level that the NPC will start with from a Spawn Rule. It'll also be the default Attack Combat Stat in a NPC Spawn.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:nonNegativeInteger"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ActorLevelDataDefenceLevel">
+		<xs:annotation>
+			<xs:documentation>The Defence Combat Stat level that the NPC will start with from a Spawn Rule. It'll also be the default Defence Combat Stat in a NPC Spawn.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:nonNegativeInteger"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ActorLevelDataHealthLevel">
+		<xs:annotation>
+			<xs:documentation>The Health Combat Stat level that the NPC will start with from a Spawn Rule. It'll also be the default Health Combat Stat in a NPC Spawn.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:nonNegativeInteger"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ActorLevelDataRangedLevel">
+		<xs:annotation>
+			<xs:documentation>The Ranged Combat Stat level that the NPC will start with from a Spawn Rule. It'll also be the default Ranged Combat Stat in a NPC Spawn.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:nonNegativeInteger"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ActorLevelDataStrengthLevel">
+		<xs:annotation>
+			<xs:documentation>The Strength Combat Stat level that the NPC will start with from a Spawn Rule. It'll also be the default Strength Combat Stat in a NPC Spawn.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:nonNegativeInteger"/>
+	</xs:simpleType>
+
 	<xs:simpleType name="ActorPhysicsDataAcceleration">
 		<xs:annotation>
 			<xs:appinfo>Blocks/s = `Acceleration` * 60</xs:appinfo>
@@ -276,44 +432,37 @@
 		<xs:restriction base="PositiveDecimal"/>
 	</xs:simpleType>
 
-	<xs:simpleType name="ActorTypeDataActorType">
-		<xs:annotation>
-			<xs:documentation>The ID of the `ActorAIDataXML` or `ModActorAIDataXML`.</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string"/>
-	</xs:simpleType>
-
 	<xs:simpleType name="ActorTypeDataAIType">
 		<xs:annotation>
 			<xs:documentation>The ID of the `ActorAIDataXML` or `ModActorAIDataXML` that will be used for this Actor Type.</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string"/>
+		<xs:restriction base="NonSpaceString"/>
 	</xs:simpleType>
 
 	<xs:simpleType name="ActorTypeDataBoundsType">
 		<xs:annotation>
 			<xs:documentation>The ID of the `ActorBoundsDataXML` that will be used for this Actor Type.</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string"/>
+		<xs:restriction base="NonSpaceString"/>
 	</xs:simpleType>
 
 	<xs:simpleType name="ActorTypeDataLevelType">
 		<xs:annotation>
 			<xs:documentation>The ID of the `ActorLevelDataXML` or `ModActorLevelDataXML` that will be used for this Actor Type.</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string"/>
+		<xs:restriction base="NonSpaceString"/>
 	</xs:simpleType>
 
 	<xs:simpleType name="ActorTypeDataPhysicsType">
 		<xs:annotation>
 			<xs:documentation>The ID of the `ActorPhysicsDataXML` or `ModActorPhysicsDataXML` that will be used for this Actor Type.</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string"/>
+		<xs:restriction base="NonSpaceString"/>
 	</xs:simpleType>
 
 	<xs:complexType name="ActorTypeDataCrouchIdleKeyframes">
 		<xs:annotation>
-			<xs:documentation>An array that contains one or more of `ComName` for the Actor Type's `CrouchIdle` animation.</xs:documentation>
+			<xs:documentation>An array that contains one or more of `ComName` for the Actor Type's `CrouchIdle` animation. Currently unused by NPCs.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="ComName" type="ComName" minOccurs="0" maxOccurs="unbounded"/>
@@ -322,7 +471,7 @@
 
 	<xs:complexType name="ActorTypeDataCrouchWalkKeyframes">
 		<xs:annotation>
-			<xs:documentation>An array that contains one or more of `ComName` for the Actor Type's `CrouchWalk` animation.</xs:documentation>
+			<xs:documentation>An array that contains one or more of `ComName` for the Actor Type's `CrouchWalk` animation. Currently unused by NPCs.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="ComName" type="ComName" minOccurs="0" maxOccurs="unbounded"/>
@@ -347,9 +496,9 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:simpleType name="ActorTypeDataCanBreatheUnderwater">
+	<xs:simpleType name="ActorTypeDataCanBreatheUnderWater">
 		<xs:annotation>
-			<xs:documentation>If `true`, the Actor Type as a NPC can breathe underwater and not drown.</xs:documentation>
+			<xs:documentation>If `true`, the Actor Type as a NPC can breathe underwater and will not take drowning damage from it.</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:boolean"/>
 	</xs:simpleType>
@@ -366,7 +515,7 @@
 			<xs:documentation>Seemingly unused.</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="Vector2"/>
+			<xs:extension base="Vector2Optional"/>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -375,15 +524,15 @@
 			<xs:documentation>The offset of the Actor Type's eye position.</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="Vector3"/>
+			<xs:extension base="Vector3Optional"/>
 		</xs:complexContent>
 	</xs:complexType>
 
 	<xs:simpleType name="ActorTypeDataFireResistance">
 		<xs:annotation>
-			<xs:documentation>The chance the Actor Type will negate the Fire effect from any source. Set to `100` for the Actor Type to become immune to the Fire effect.</xs:documentation>
+			<xs:documentation>The resistance the Actor Type will have to the Fire effect from any source. Fire effect length increases below 0, and decreases above 0. Set to `100` or above for the Actor Type to become immune to the Fire effect.</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="PercentInteger"/>
+		<xs:restriction base="xs:integer"/>
 	</xs:simpleType>
 
 	<xs:simpleType name="ActorTypeDataHandMaxHit">
@@ -402,14 +551,14 @@
 
 	<xs:simpleType name="ActorTypeDataIceResistance">
 		<xs:annotation>
-			<xs:documentation>The chance the Actor Type will negate the Ice effect from any source. Set to `100` for the Actor Type to become immune to the Ice effect.</xs:documentation>
+			<xs:documentation>The resistance the Actor Type will have to the Ice effect from any source. Ice effect length increases below 0, and decreases above 0. Set to `100` or above for the Actor Type to become immune to the Ice effect.</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="PercentInteger"/>
+		<xs:restriction base="xs:integer"/>
 	</xs:simpleType>
 
 	<xs:simpleType name="ActorTypeDataIsFemale">
 		<xs:annotation>
-			<xs:documentation>If `true`, the Actor Type is considered a female Actor.</xs:documentation>
+			<xs:documentation>Unused Actor Type Data.<br/>If `true`, the Actor Type is considered a female Actor Type..</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:boolean"/>
 	</xs:simpleType>
@@ -430,7 +579,7 @@
 
 	<xs:simpleType name="ActorTypeDataIsPassive">
 		<xs:annotation>
-			<xs:documentation>If `true`, the Actor Type as a NPC will be considered a Passive NPC.</xs:documentation>
+			<xs:documentation>If `true`, the Actor Type as a NPC will be considered a Passive NPC.<br/>Passive NPCs will have a green dot on the Compass, and will only spawn from a Spawn Rule if the `Passive NPCs` Game Difficulty option is Enabled.</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:boolean"/>
 	</xs:simpleType>
@@ -447,7 +596,7 @@
 			<xs:documentation>The offset of the Actor Type's held Item's position when in their hand.</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="Vector3"/>
+			<xs:extension base="Vector3Optional"/>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -474,6 +623,7 @@
 
 	<xs:simpleType name="ActorTypeDataNameArticle">
 		<xs:annotation>
+			<xs:appinfo>"*User was killed by `<![CDATA[<]]>NameArticle<![CDATA[>]]>` `<![CDATA[<]]>Name<![CDATA[>]]>`.*"</xs:appinfo>
 			<xs:documentation>The word placed before the Actor Type's name in a sentance through in-game means (such as in Death Messages.)</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string"/>
@@ -505,9 +655,30 @@
 			<xs:documentation>The offset of the Actor Type's Strike point (where they attack relative in an `Attack` behaviour node) position.</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="Vector3"/>
+			<xs:extension base="Vector3Optional"/>
 		</xs:complexContent>
 	</xs:complexType>
+
+	<xs:simpleType name="AmbientSoundCueName">
+		<xs:annotation>
+			<xs:documentation>The sound effect's file name to play for the Ambient Sound effect.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="AmbientSoundIsValid">
+		<xs:annotation>
+			<xs:documentation>If `true`, the Ambient Sound is valid and can be used in-game.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:boolean"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="AmbientSoundName">
+		<xs:annotation>
+			<xs:documentation>The name of the Ambient Sound effect shown in-game in menus.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
 
 	<xs:simpleType name="DeathMessageMessage">
 		<xs:annotation>
@@ -515,6 +686,29 @@
 		</xs:annotation>
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
+
+	<xs:complexType name="ModInfoXMLVersion">
+		<xs:annotation>
+			<xs:documentation>The version of the mod shown in-game. If not used or is missing any of the child elements, it will be shown as version `1.0.0`. Uses <a href="https://semver.org/">Systemic Versioning</a>.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="Major" type="xs:integer" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The current change that breaks backwards compatability.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Minor" type="xs:integer" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The current change that adds additions that supports backwards compatability.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Patch" type="xs:integer" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The current change that fixes bugs that supports backwards compatability.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
 
 	<xs:simpleType name="PlaylistName">
 		<xs:annotation>
@@ -611,6 +805,7 @@
 	<!-- definition of complex elements -->
 	<xs:complexType name="AttributeCondition">
 		<xs:annotation>
+			<xs:appinfo>`<![CDATA[&lt;Condition Type="ConditionType" DamageType="DamageTypeString" ItemID="ItemIDString" Target="TargetString" Comparison="Comparitor" Value="Any"/&gt;]]>`</xs:appinfo>
 			<xs:documentation>The condition or conditions that must be met for the element to be active.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
@@ -618,7 +813,7 @@
 		</xs:sequence>
 		<xs:attribute name="Comparison" type="AttributeConditionComparison" use="optional">
 			<xs:annotation>
-				<xs:documentation>The comparison of the condition against `Value` to use for `Condition`.</xs:documentation>
+				<xs:documentation>The comparison of the condition against `Value`.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute name="DamageType" type="AttributeDamageType" use="optional">
@@ -626,25 +821,47 @@
 				<xs:documentation>The type of damage inflicted in the condition (if any.)</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="HistoryType" type="AttributeConditionHistory" use="optional">
+			<xs:annotation>
+				<xs:documentation>The type of History to compare in the condition.<br/>Used exclusively for `Type="History"`.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ItemID" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The `ItemID` of the condition.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Name" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The `Name` of the condition.<br/>Used exclusively for `Type="History"`.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Percent" type="PercentInteger" use="optional">
+			<xs:annotation>
+				<xs:documentation>The `Percent` chance of the condition.<br/>Used exclusively for `Type="Chance"`.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="Target" type="AttributeConditionTarget" use="optional">
 			<xs:annotation>
-				<xs:documentation>The target of the condition.</xs:documentation>
+				<xs:documentation>Sets the compared target of the condition.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute name="Value" type="xs:anySimpleType" use="optional">
 			<xs:annotation>
-				<xs:documentation>The value of the condition to use for `Condition`.</xs:documentation>
+				<xs:documentation>The value of the condition.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute name="Type" type="AttributeConditionType" use="required">
 			<xs:annotation>
-				<xs:documentation>The type of the condition to use for `Condition`.</xs:documentation>
+				<xs:documentation>The type of the condition.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 	</xs:complexType>
 
+
 	<xs:complexType name="AttributeDrop">
 		<xs:annotation>
+			<xs:appinfo>`<![CDATA[&lt;Drop ItemID="ItemIDString" Min="Integer" Max="Integer" Weight="Integer"/&gt;]]>`</xs:appinfo>
 			<xs:documentation>An Item Drop from a `DropEntry` element.</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="ItemID" type="xs:string" use="required">
@@ -652,26 +869,27 @@
 				<xs:documentation>The `ItemID` of the Item to be dropped from the `Drop` element.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="Min" type="xs:nonNegativeInteger" use="optional">
+		<xs:attribute name="Min" type="xs:nonNegativeInteger" use="required">
 			<xs:annotation>
 				<xs:documentation>The minimum amount of the `ItemID` possble from the `Drop` element.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="Max" type="xs:nonNegativeInteger" use="optional">
+		<xs:attribute name="Max" type="xs:nonNegativeInteger" use="required">
 			<xs:annotation>
 				<xs:documentation>The maximum amount of the `ItemID` possible from the `Drop` element.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="Weight" type="xs:nonNegativeInteger" use="optional">
+		<xs:attribute name="Weight" type="xs:nonNegativeInteger" use="required">
 			<xs:annotation>
-				<xs:documentation>The weight of the `Drop` element. Heavier weighed elements are more likely to be chosen than lighter weighed elements.</xs:documentation>
+				<xs:documentation>The weight of the `Drop` element. Heavier weighed elements are more likely to be randomly chosen than lighter weighed elements.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 	</xs:complexType>
 
 	<xs:complexType name="AttributeDropEntry">
 		<xs:annotation>
-			<xs:documentation>An Item Drop Entry for a `LootTable`.</xs:documentation>
+			<xs:appinfo>`<![CDATA[&lt;DropEntry ID="DropEntryID" PercentChance="Integer(0-100)" RollCount="Integer" Modify="Boolean" Remove="Boolean"&gt;]]>`</xs:appinfo>
+			<xs:documentation>An Item Drop Entry for a `LootTable`. `Drop` elements are chosen at random based on their weight.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="Condition" type="AttributeCondition" minOccurs="0" maxOccurs="1"/>
@@ -699,7 +917,7 @@
 		</xs:attribute>
 		<xs:attribute name="RollCount" use="required">
 			<xs:annotation>
-				<xs:documentation>The amount of times the Drop Entry is rolled per Loot Table.</xs:documentation>
+				<xs:documentation>The amount of times the Drop Entry will randomly pick a `Drop` element.</xs:documentation>
 			</xs:annotation>
 			<xs:simpleType>
 				<xs:restriction base="xs:nonNegativeInteger">
@@ -709,10 +927,59 @@
 		</xs:attribute>
 	</xs:complexType>
 
+	<xs:complexType name="HitBoundsBound">
+		<xs:sequence>
+			<xs:element name="Offset" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>`<![CDATA[&lt;Offset X="Decimal" Y="Decimal" Z="Decimal"&gt;]]>`</xs:appinfo>
+					<xs:documentation>The offset of the Boundary against the Actor Type's current position view relative.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="X" type="xs:decimal" use="optional">
+						<xs:annotation>
+							<xs:documentation>Moves the Actor Type's Boundary horizontally to the left and right.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="Y" type="xs:decimal" use="optional">
+						<xs:annotation>
+							<xs:documentation>Moves the Actor Type's Boundary vertically.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="Z" type="xs:decimal" use="optional">
+						<xs:annotation>
+							<xs:documentation>Moves the Actor Type's Boundary horizontally to the front and back.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Size" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>`<![CDATA[&lt;Size Width="Decimal" Height="Decimal"&gt;]]>`</xs:appinfo>
+					<xs:documentation>The size of the Boundary.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="Height" type="BoundaryHeight" use="optional"/>
+					<xs:attribute name="Width" type="BoundaryWidth" use="optional"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="DamageMultiplier" type="PositiveDecimal" use="optional">
+			<xs:annotation>
+				<xs:documentation>The Damage Multiplier of the Boundary. Values below `1` reduce damage while values above `1` increase damage.<br/>Not associated with the `IsCritical` attribute.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="IsCritical" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>If the Boundary is considered a Critical Boundary. When an Actor Type or NPC shows their hitboxes, Critical Boundary Boxes are colored pink.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
 	<xs:complexType name="LootTable">
 		<xs:sequence>
 			<xs:element name="Entries" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
+					<xs:appinfo>`<![CDATA[&lt;Entries Modify="Boolean"&gt;]]>`</xs:appinfo>
 					<xs:documentation>An array that contains `DropEntry`.</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
@@ -772,16 +1039,36 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:simpleType name="AttributeConditionHistory">
+		<xs:restriction base="xs:string">
+				<xs:enumeration value="Actor">
+					<xs:annotation>
+						<xs:documentation>The compared Actor's history.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="Clan">
+					<xs:annotation>
+						<xs:documentation>The compared Actor's Clan history. If the compared Actor is not in a clan, then no History can be checked.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="System">
+					<xs:annotation>
+						<xs:documentation>The World's history.</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:simpleType name="AttributeConditionTarget">
 		<xs:restriction base="xs:string">
 				<xs:enumeration value="Self">
 					<xs:annotation>
-						<xs:documentation>The compared Actor of the condition.</xs:documentation>
+						<xs:documentation>The compared Actor/Block of the condition.</xs:documentation>
 					</xs:annotation>
 				</xs:enumeration>
 				<xs:enumeration value="Target">
 					<xs:annotation>
-						<xs:documentation>The compared Actor of the condition's targetted Actor.</xs:documentation>
+						<xs:documentation>The compared Actor/Block of the condition's targetted Actor/Block.</xs:documentation>
 					</xs:annotation>
 				</xs:enumeration>
 		</xs:restriction>
@@ -815,42 +1102,58 @@
 			</xs:enumeration>
 			<xs:enumeration value="Health">
 				<xs:annotation>
-					<xs:documentation>The current Health of the compared Actor.</xs:documentation>
+					<xs:appinfo>`Type="Health" Comparison="Comparitor" Value="Integer"`</xs:appinfo>
+					<xs:documentation>The current Health of the compared Actor.<br/>Use `Target` to change the compared Actor.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="MaxHealth">
 				<xs:annotation>
-					<xs:documentation>The maximum Health of the compared Actor.</xs:documentation>
+					<xs:appinfo>`Type="MaxHealth" Comparison="Comparitor" Value="Integer"`</xs:appinfo>
+					<xs:documentation>The maximum Health of the compared Actor.<br/>Use `Target` to change the compared Actor.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="Oxygen">
 				<xs:annotation>
-					<xs:documentation>The current Oxygen of the compared Actor.</xs:documentation>
+					<xs:appinfo>`Type="Oxygen" Comparison="Comparitor" Value="Integer"`</xs:appinfo>
+					<xs:documentation>The current Oxygen of the compared Actor.<br/>Use `Target` to change the compared Actor.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="MaxOxygen">
 				<xs:annotation>
-					<xs:documentation>The maximum Oxygen of the compared Actor.</xs:documentation>
+					<xs:appinfo>`Type="MaxOxygen" Comparison="Comparitor" Value="Integer"`</xs:appinfo>
+					<xs:documentation>The maximum Oxygen of the compared Actor.<br/>Use `Target` to change the compared Actor.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="Stamina">
 				<xs:annotation>
-					<xs:documentation>The current Stamina of the compared Actor.</xs:documentation>
+					<xs:appinfo>`Type="Stamina" Comparison="Comparitor" Value="Integer"`</xs:appinfo>
+					<xs:documentation>The current Stamina of the compared Actor.<br/>Use `Target` to change the compared Actor.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="MaxStamina">
 				<xs:annotation>
-					<xs:documentation>The maximum Stamina of the compared Actor.</xs:documentation>
+					<xs:appinfo>`Type="MaxStamina" Comparison="Comparitor" Value="Integer"`</xs:appinfo>
+					<xs:documentation>The maximum Stamina of the compared Actor.<br/>Use `Target` to change the compared Actor.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="IsItemEquipped">
 				<xs:annotation>
-					<xs:appinfo>`Type="IsItemEquipped" ItemID="ItemID" Value="Boolean"`</xs:appinfo>
-					<xs:documentation>If the compared Actor has the specified `ItemID` equipped.</xs:documentation>
+					<xs:appinfo>`Type="IsItemEquipped" ItemID="ItemIDString" Value="Boolean"`</xs:appinfo>
+					<xs:documentation>If the compared Actor has the specified `ItemID` equipped.<br/>Use `Target` to change the compared Actor.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
-			<xs:enumeration value="HasItem"/>
-			<xs:enumeration value="HasItemCount"/>
+			<xs:enumeration value="HasItem">
+				<xs:annotation>
+					<xs:appinfo>`Type="HasItem" ItemID="ItemIDString" Value="Boolean"`</xs:appinfo>
+					<xs:documentation>If the compared Actor has the specified `ItemID` in their inventory.<br/>Use `Target` to change the compared Actor.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="HasItemCount">
+				<xs:annotation>
+					<xs:appinfo>`Type="HasItemCount" ItemID="ItemIDString" Comparison="Comparitor" Value="Integer"`</xs:appinfo>
+					<xs:documentation>If the compared Actor has the specified `ItemID` in their inventory in a specific quantity.<br/>Use `Target` to change the compared Actor.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
 			<xs:enumeration value="DamageType">
 				<xs:annotation>
 					<xs:appinfo>`Type="DamageType" DamageType="DamageTypeString" Value="Boolean"`</xs:appinfo>
@@ -859,26 +1162,26 @@
 			</xs:enumeration>
 			<xs:enumeration value="ActorType">
 				<xs:annotation>
-					<xs:appinfo>`Type="ActorType" Target="TargetString" Value="ActorTypeString"`</xs:appinfo>
-					<xs:documentation>The Actor Type of the compared target Actor.</xs:documentation>
+					<xs:appinfo>`Type="ActorType" Value="ActorTypeString"`</xs:appinfo>
+					<xs:documentation>If the compared Actor is of a specified Actor Type.<br/>Use `Target` to change the compared Actor.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="IsPlayer">
 				<xs:annotation>
-					<xs:appinfo>`Type="IsPlayer" Target="TargetString" Value="Boolean"`</xs:appinfo>
-					<xs:documentation>If the compared target Actor is a player.</xs:documentation>
+					<xs:appinfo>`Type="IsPlayer" Value="Boolean"`</xs:appinfo>
+					<xs:documentation>If the compared Actor is a Player.<br/>Use `Target` to change the compared Actor.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="IsNPC">
 				<xs:annotation>
-					<xs:appinfo>`Type="IsNPC" Target="TargetString" Value="Boolean"`</xs:appinfo>
-					<xs:documentation>If the compared target Actor is a NPC.</xs:documentation>
+					<xs:appinfo>`Type="IsNPC" Value="Boolean"`</xs:appinfo>
+					<xs:documentation>If the compared Actor is a NPC.<br/>Use `Target` to change the compared Actor.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="ActorExists">
 				<xs:annotation>
-					<xs:appinfo>`Type="ActorExists" Target="TargetString" Value="Boolean"`</xs:appinfo>
-					<xs:documentation>If the compared target Actor exists within the World.</xs:documentation>
+					<xs:appinfo>`Type="ActorExists" Value="Boolean"`</xs:appinfo>
+					<xs:documentation>If the compared Actor exists within the World.<br/>Use `Target` to change the compared Actor.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="X">
@@ -905,7 +1208,7 @@
 			<xs:enumeration value="IsNatural">
 				<xs:annotation>
 					<xs:appinfo>`Type="IsNatural" Value="Boolean"`</xs:appinfo>
-					<xs:documentation>Block only. If the compared block was naturally generated by the world.</xs:documentation>
+					<xs:documentation>Can only target Blocks. If the compared Block was naturally generated by the world.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="IsBlock">
@@ -926,36 +1229,46 @@
 			<xs:enumeration value="BlockLight">
 				<xs:annotation>
 					<xs:appinfo>`Type="BlockLight" Comparison="Comparitor" Value="Integer(0-15)"`</xs:appinfo>
-					<xs:documentation>The light level based on the light from any placed blocks. The value compared is a integer between 0 (unlit) to 15 (fully lit.)</xs:documentation>
+					<xs:documentation>The light level based on the light from any placed blocks where the compared Actor is at. The value compared is a integer between 0 (unlit) to 15 (fully lit.)</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="SkyLight">
 				<xs:annotation>
 					<xs:appinfo>`Type="SkyLight" Comparison="Comparitor" Value="Integer(0-15)"`</xs:appinfo>
-					<xs:documentation>The light level based on the light from the Sky. The value compared is a integer between 0 (unlit) to 15 (fully lit.)</xs:documentation>
+					<xs:documentation>The light level based on the light from the Sky where the compared Actor is at. The value compared is a integer between 0 (unlit) to 15 (fully lit.)</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="IsAux"/>
 			<xs:enumeration value="All">
 				<xs:annotation>
 					<xs:appinfo>`Type="All"`</xs:appinfo>
-					<xs:documentation>If all of the sub-conditions are true, than the comparison is true. Otherwise false.</xs:documentation>
+					<xs:documentation>If all of the sub-conditions are `true`, than the comparison is `true`; otherwise `false`.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="Any">
 				<xs:annotation>
 					<xs:appinfo>`Type="Any"`</xs:appinfo>
-					<xs:documentation>If any of the sub-conditions are true, than the comparison is true. Otherwise false.</xs:documentation>
+					<xs:documentation>If any of the sub-conditions are `true`, than the comparison is `true`; otherwise `false`.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="Not">
 				<xs:annotation>
 					<xs:appinfo>`Type="Not"`</xs:appinfo>
-					<xs:documentation>The comparison will be the inverse of the child comparison (true becomes false and vice-versa.) Can only have one child element.</xs:documentation>
+					<xs:documentation>The comparison will be the inverse of the child comparison (`true` becomes `false` and vice-versa.) Can only have one `Condition` element.</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
-			<xs:enumeration value="Chance"/>
-			<xs:enumeration value="History"/>
+			<xs:enumeration value="Chance">
+				<xs:annotation>
+					<xs:appinfo>`Type="Chance" Percent="PercentInteger"`</xs:appinfo>
+					<xs:documentation>Has a 1 in `Percent` chance for the comparison to be `true`; otherwise `false`.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="History">
+				<xs:annotation>
+					<xs:appinfo>`Type="History" HistoryType="HistoryTypeString" Name="NameString" Comparison="Comparitor" Value="Integer"`</xs:appinfo>
+					<xs:documentation>If the History of a specified name and type (`System`, `Actor`, or `Clan`) exists, then the comparison is `true`; otherwise `false`.<br/>Use `Target` to change the compared Actor.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -982,12 +1295,151 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="ModActorTypeDataXML">
+	<xs:complexType name="ModActorAIDataXML">
 		<xs:annotation>
-			<xs:documentation>Modded Actor Type Data that allows for customizable vanilla or modded Actor Type data.</xs:documentation>
+			<xs:documentation>Modded Actor AI Data that allows for customizable vanilla or modded NPCs' AI data.<br/>It's used for the AI a NPC of this Actor Type to determine how it works in gameplay.</xs:documentation>
 		</xs:annotation>
 		<xs:all>
-			<xs:element name="ActorType" type="ActorTypeDataActorType" minOccurs="0"/>
+			<xs:element name="ActorAIType" type="NonEmptyString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the `ModActorAIDataXML`. If the `ID` is not unique, it'll modify the Actor AI Data with the same `ID`.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StrikeDelay" type="ActorAIStrikeDelay" minOccurs="0"/>
+			<xs:element name="StrikeRange" type="ActorAIStrikeRange" minOccurs="0"/>
+			<xs:element name="BowRange" type="ActorAIBowRange" minOccurs="0"/>
+			<xs:element name="RegardRange" type="ActorAIRegardRange" minOccurs="0"/>
+			<xs:element name="HearingRange" type="ActorAIHearingRange" minOccurs="0"/>
+			<xs:element name="InactiveRange" type="ActorAIInactiveRange" minOccurs="0"/>
+
+			<!-- depreciated -->
+			<xs:element name="AttackRange" type="ActorAIAttackRange" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfModActorAIDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ModActorAIDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ModActorAIDataXML" type="ModActorAIDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ModActorAudioDataXML">
+		<xs:annotation>
+			<xs:documentation>Modded Actor AI Data that allows for customizable vanilla or modded NPCs' Audio data.<br/>It's used for the audio cues this Actor Type will emit through gameplay.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ActorType" type="NonEmptyString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the `ModActorAudioDataXML`. If the `ID` is not unique, it'll modify the Actor Audio Data with the same `ID`.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AudioPain" type="ActorAudioAudioPain" minOccurs="0"/>
+			<xs:element name="AudioStrike" type="ActorAudioAudioStrike" minOccurs="0"/>
+			<xs:element name="AudioWarning" type="ActorAudioAudioWarning" minOccurs="0"/>
+			<xs:element name="AudioDeath" type="ActorAudioAudioDeath" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfModActorAudioDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ModActorAudioDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ModActorAudioDataXML" type="ModActorAudioDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ModActorBoundsDataXML">
+		<xs:annotation>
+			<xs:documentation>Modded Actor Boundaries (otherwise known as Hitboxes) Data that allows for customizable vanilla or modded NPCs' Boundaries data.<br/>It's used for the Boundaries a NPC of this Actor Type will have, including special properties a Boundary may have, alongside their Collision Box.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ActorBoundsType" type="NonEmptyString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the `ModActorBoundsDataXML`. If the `ID` is not unique, it'll modify the Actor Boundaries Data with the same `ID`.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CollisionBoxSize" type="ModActorBoundsDataCollisionBoxSize" minOccurs="0"/>
+			<xs:element name="CrouchCollisionBoxSize" type="ModActorBoundsDataCrouchCollisionBoxSize" minOccurs="0"/>
+			<xs:element name="HitBounds" type="ModActorBoundsDataHitBounds" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfModActorBoundsDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ModActorBoundsDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ModActorBoundsDataXML" type="ModActorBoundsDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ModActorLevelDataXML">
+		<xs:annotation>
+			<xs:documentation>Modded Actor Combat Stats Level Data that allows for customizable vanilla or modded NPCs' Combat Stats Level data.<br/>It's used for the default Combat Stats a NPC of this Actor Type will start with from either a Spawn Rule or when using a new NPC Spawn block.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ActorLevelType" type="NonEmptyString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the `ModActorLevelDataXML`. If the `ID` is not unique, it'll modify the Actor Combat Stats Level Data with the same `ID`.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HealthLevel" type="ActorLevelDataHealthLevel" minOccurs="0"/>
+			<xs:element name="AttackLevel" type="ActorLevelDataAttackLevel" minOccurs="0"/>
+			<xs:element name="StrengthLevel" type="ActorLevelDataStrengthLevel" minOccurs="0"/>
+			<xs:element name="DefenceLevel" type="ActorLevelDataDefenceLevel" minOccurs="0"/>
+			<xs:element name="RangedLevel" type="ActorLevelDataRangedLevel" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfModActorLevelDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ModActorLevelDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ModActorLevelDataXML" type="ModActorLevelDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ModActorPhysicsDataXML">
+		<xs:annotation>
+			<xs:documentation>Modded Actor Physics Data that allows for customizable vanilla or modded NPCs' Physics data.<br/>It's used for how a NPC of this Actor Type will move through the world.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ActorPhysicsType" type="NonEmptyString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the `ModActorPhysicsDataXML`. If the `ID` is not unique, it'll modify the Actor Physics Data with the same `ID`.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Acceleration" type="ActorPhysicsDataAcceleration" minOccurs="0"/>
+			<xs:element name="MoveSpeed" type="ActorPhysicsDataMoveSpeed" minOccurs="0"/>
+			<xs:element name="JumpSpeed" type="ActorPhysicsDataJumpSpeed" minOccurs="0"/>
+			<xs:element name="RotateSpeed" type="ActorPhysicsDataRotateSpeed" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfModActorPhysicsDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ModActorPhysicsDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ModActorPhysicsDataXML" type="ModActorPhysicsDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ModActorTypeDataXML">
+		<xs:annotation>
+			<xs:documentation>Modded Actor Type Data that allows for customizable vanilla or modded Actor Type data.<br/>It's used for any Actor of this Actor Type to determine how they work, including Players where applicable.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ActorType" type="NonSpaceString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the `ActorAIDataXML` or `ModActorAIDataXML`. If the `ID` is not unique, it'll modify the Actor Type Data with the same `ID`</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="LevelType" type="ActorTypeDataLevelType" minOccurs="0"/>
 			<xs:element name="PhysicsType" type="ActorTypeDataPhysicsType" minOccurs="0"/>
 			<xs:element name="AIType" type="ActorTypeDataAIType" minOccurs="0"/>
@@ -996,7 +1448,7 @@
 			<xs:element name="CrouchIdleKeyframes" type="ActorTypeDataCrouchIdleKeyframes" minOccurs="0"/>
 			<xs:element name="WalkKeyframes" type="ActorTypeDataWalkKeyframes" minOccurs="0"/>
 			<xs:element name="CrouchWalkKeyframes" type="ActorTypeDataCrouchWalkKeyframes" minOccurs="0"/>
-			<xs:element name="CanBreatheUnderwater" type="ActorTypeDataCanBreatheUnderwater" minOccurs="0"/>
+			<xs:element name="CanBreatheUnderWater" type="ActorTypeDataCanBreatheUnderWater" minOccurs="0"/>
 			<xs:element name="EyeOffset" type="ActorTypeDataEyeOffset" minOccurs="0"/>
 			<xs:element name="FireResistance" type="ActorTypeDataFireResistance" minOccurs="0"/>
 			<xs:element name="HandMaxHit" type="ActorTypeDataHandMaxHit" minOccurs="0"/>
@@ -1043,63 +1495,6 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="ModActorAIDataXML">
-		<xs:annotation>
-			<xs:documentation>Modded Actor AI Data that allows for customizable vanilla or modded NPCs' AI data.</xs:documentation>
-		</xs:annotation>
-		<xs:all>
-			<xs:element name="ActorAIType" type="NonEmptyString" minOccurs="1">
-				<xs:annotation>
-					<xs:documentation>The ID of the `ModActorAIDataXML`. If the `ID` is not unique, it'll overwrite the Actor AI Data with the same `ID`.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="StrikeDelay" type="ActorAIStrikeDelay" minOccurs="0"/>
-			<xs:element name="StrikeRange" type="ActorAIStrikeRange" minOccurs="0"/>
-			<xs:element name="BowRange" type="ActorAIBowRange" minOccurs="0"/>
-			<xs:element name="RegardRange" type="ActorAIRegardRange" minOccurs="0"/>
-			<xs:element name="HearingRange" type="ActorAIHearingRange" minOccurs="0"/>
-			<xs:element name="InactiveRange" type="ActorAIInactiveRange" minOccurs="0"/>
-
-			<!-- depreciated -->
-			<xs:element name="AttackRange" type="ActorAIAttackRange" minOccurs="0"/>
-		</xs:all>
-	</xs:complexType>
-
-	<xs:complexType name="ArrayOfModActorAIDataXML">
-		<xs:annotation>
-			<xs:documentation>An array that contains one or more of `ModActorAIDataXML`.</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="ModActorAIDataXML" type="ModActorAIDataXML" minOccurs="1" maxOccurs="unbounded"/>
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="ModActorPhysicsDataXML">
-		<xs:annotation>
-			<xs:documentation>Modded Actor Physics Data that allows for customizable vanilla or modded NPCs' Physics data.</xs:documentation>
-		</xs:annotation>
-		<xs:all>
-			<xs:element name="ActorPhysicsType" type="NonEmptyString" minOccurs="1">
-				<xs:annotation>
-					<xs:documentation>The ID of the `ModActorPhysicsDataXML`. If the `ID` is not unique, it'll overwrite the Actor Physics Data with the same `ID`.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="Acceleration" type="ActorPhysicsDataAcceleration" minOccurs="0"/>
-			<xs:element name="MoveSpeed" type="ActorPhysicsDataMoveSpeed" minOccurs="0"/>
-			<xs:element name="JumpSpeed" type="ActorPhysicsDataJumpSpeed" minOccurs="0"/>
-			<xs:element name="RotateSpeed" type="ActorPhysicsDataRotateSpeed" minOccurs="0"/>
-		</xs:all>
-	</xs:complexType>
-
-	<xs:complexType name="ArrayOfModActorPhysicsDataXML">
-		<xs:annotation>
-			<xs:documentation>An array that contains one or more of `ModActorPhysicsDataXML`.</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="ModActorPhysicsDataXML" type="ModActorPhysicsDataXML" minOccurs="1" maxOccurs="unbounded"/>
-		</xs:sequence>
-	</xs:complexType>
-
 	<xs:complexType name="ModDeathMessageXML">
 		<xs:annotation>
 			<xs:documentation>Modded Death Messages that allows for customizable vanilla or modded Death Messages.</xs:documentation>
@@ -1126,6 +1521,7 @@
 
 	<xs:complexType name="ModSpawnRuleXML">
 		<xs:annotation>
+			<xs:appinfo>`<![CDATA[&lt;ModSpawnRuleXML ID="SpawnRuleIDString"&gt;]]>`</xs:appinfo>
 			<xs:documentation>Modded Spawn Rule that allows for customizable natural spawning of both vanilla and modded NPCs.</xs:documentation>
 		</xs:annotation>
 		<xs:all>
@@ -1155,86 +1551,58 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:element name="ArrayOfItemXML" type="ArrayOfItemXML"/>
-	<xs:element name="ArrayOfModActorAIDataXML" type="ArrayOfModActorAIDataXML"/>
-	<xs:element name="ArrayOfModActorPhysicsDataXML" type="ArrayOfModActorPhysicsDataXML"/>
-	<xs:element name="ArrayOfModActorTypeDataXML" type="ArrayOfModActorTypeDataXML"/>
-	<xs:element name="ArrayOfModDeathMessageXML" type="ArrayOfModDeathMessageXML"/>
-	<xs:element name="ArrayOfModSpawnRuleXML" type="ArrayOfModSpawnRuleXML"/>
-
-	<xs:element name="ModInfoXML">
-		<xs:complexType>
-			<xs:annotation>
-				<xs:documentation>Mod Information for a Total Miner mod. Every mod is required to have a `ModInfo.xml` file with a `ModInfoXML` element.</xs:documentation>
-			</xs:annotation>
-			<xs:all>
-				<xs:element name="ID" type="NonEmptyString" minOccurs="1">
-					<xs:annotation>
-						<xs:documentation>The ID of the mod when used from your local mods folder.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="WorkshopID" type="NonEmptyString" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>The ID of the mod when used from your downloaded Steam Workshop mods.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="Name" type="xs:string" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>The name of the mod shown in-game. If not used, the mod folder's name will be used instead.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="Desc" type="xs:string" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>The description of the mod shown.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="Author" type="xs:string" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>The author of the mod shown in-game in the mod information.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="Website" type="xs:string" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>A website link shown in-game in the mod information.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="Icon" type="xs:string" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>The icon of the mod shown in-game. If not used, the mod in-game will not have an icon. The value of `Icon` should also include the file extension.</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="Version" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>The version of the mod shown in-game. If not used or is missing any of the child elements, it will be shown as version `1.0.0`. Uses <a href="https://semver.org/">Systemic Versioning</a>.</xs:documentation>
-					</xs:annotation>
-					<xs:complexType>
-						<xs:all>
-							<xs:element name="Major" type="xs:integer" minOccurs="1">
-								<xs:annotation>
-									<xs:documentation>The current change that breaks backwards compatability.</xs:documentation>
-								</xs:annotation>
-							</xs:element>
-							<xs:element name="Minor" type="xs:integer" minOccurs="1">
-								<xs:annotation>
-									<xs:documentation>The current change that adds additions that supports backwards compatability.</xs:documentation>
-								</xs:annotation>
-							</xs:element>
-							<xs:element name="Patch" type="xs:integer" minOccurs="1">
-								<xs:annotation>
-									<xs:documentation>The current change that fixes bugs that supports backwards compatability.</xs:documentation>
-								</xs:annotation>
-							</xs:element>
-						</xs:all>
-					</xs:complexType>
-				</xs:element>
-			</xs:all>
-		</xs:complexType>
-	</xs:element>
+	<xs:complexType name="ModInfoXML">
+		<xs:annotation>
+			<xs:documentation>Mod Information for a Total Miner mod. Every mod is required to have a `ModInfo.xml` file with a `ModInfoXML` element.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ID" type="NonEmptyString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the mod when used from your local mods folder.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WorkshopID" type="NonEmptyString" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The ID of the mod when used from your downloaded Steam Workshop mods.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The name of the mod shown in-game. If not used, the mod folder's name will be used instead.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Desc" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The description of the mod shown.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Author" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The author of the mod shown in-game in the mod information.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Website" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A website link shown in-game in the mod information.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Icon" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The icon of the mod shown in-game. If not used, the mod in-game will not have an icon. The value of `Icon` should also include the file extension.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Version" type="ModInfoXMLVersion" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The version of the mod shown in-game. If not used or is missing any of the child elements, it will be shown as version `1.0.0`. Uses <a href="https://semver.org/">Systemic Versioning</a>.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
 
 	<!-- definition of vanilla elements -->
 	<xs:complexType name="ActorAIDataXML">
 		<xs:annotation>
-			<xs:documentation>Vanilla Actor AI Data that allows for customizable vanilla NPCs' AI data.</xs:documentation>
+			<xs:documentation>Vanilla Actor AI Data that allows for customizable vanilla NPCs' AI data.<br/>It's used for the AI a NPC of this Actor Type to determine how it works in gameplay.</xs:documentation>
 		</xs:annotation>
 		<xs:all>
 			<xs:element name="ActorAIType" type="NonEmptyString" minOccurs="1">
@@ -1263,9 +1631,62 @@
 		</xs:sequence>
 	</xs:complexType>
 
+	<xs:complexType name="ActorAudioDataXML">
+		<xs:annotation>
+			<xs:documentation>Vanilla Actor AI Data that allows for customizable vanilla NPCs' Audio data.<br/>It's used for the audio cues this Actor Type will emit through gameplay.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ActorType" type="NonEmptyString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the `ActorAudioDataXML`. If the `ID` is not unique, it'll modify the Actor Audio Data with the same `ID`.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AudioPain" type="ActorAudioAudioPain" minOccurs="0"/>
+			<xs:element name="AudioStrike" type="ActorAudioAudioStrike" minOccurs="0"/>
+			<xs:element name="AudioWarning" type="ActorAudioAudioWarning" minOccurs="0"/>
+			<xs:element name="AudioDeath" type="ActorAudioAudioDeath" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfActorAudioDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ActorAudioDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ActorAudioDataXML" type="ActorAudioDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ActorLevelDataXML">
+		<xs:annotation>
+			<xs:documentation>Modded Actor Combat Stats Level Data that allows for customizable vanilla or modded NPCs' Combat Stats Level data.<br/>It's used for the default Combat Stats a NPC of this Actor Type will start with from either a Spawn Rule or when using a new NPC Spawn block.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ActorLevelType" type="NonEmptyString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the `ActorLevelDataXML`. If the `ID` is not unique, it'll modify the Actor Combat Stats Level Data with the same `ID`.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HealthLevel" type="ActorLevelDataHealthLevel" minOccurs="0"/>
+			<xs:element name="AttackLevel" type="ActorLevelDataAttackLevel" minOccurs="0"/>
+			<xs:element name="StrengthLevel" type="ActorLevelDataStrengthLevel" minOccurs="0"/>
+			<xs:element name="DefenceLevel" type="ActorLevelDataDefenceLevel" minOccurs="0"/>
+			<xs:element name="RangedLevel" type="ActorLevelDataRangedLevel" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfActorLevelDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ActorLevelDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ActorLevelDataXML" type="ActorLevelDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
 	<xs:complexType name="ActorPhysicsDataXML">
 		<xs:annotation>
-			<xs:documentation>Vanilla Actor Physics Data that allows for customizable vanilla NPCs' Physics data.</xs:documentation>
+			<xs:documentation>Vanilla Actor Physics Data that allows for customizable vanilla NPCs' Physics data.<br/>It's used for how a NPC of this Actor Type will move through the world.</xs:documentation>
 		</xs:annotation>
 		<xs:all>
 			<xs:element name="ActorPhysicsType" type="NonEmptyString" minOccurs="1">
@@ -1286,6 +1707,140 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="ActorPhysicsDataXML" type="ActorPhysicsDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ActorTypeDataXML">
+		<xs:annotation>
+			<xs:documentation>Vanilla Actor Type Data that allows for customizable vanilla Actor Type data.<br/>It's used for any Actor of this Actor Type to determine how they work, including Players.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ActorType" type="NonSpaceString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the `ActorAIDataXML`. If the `ID` is not unique, it'll modify the Actor Type Data with the same `ID`</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LevelType" type="ActorTypeDataLevelType" minOccurs="0"/>
+			<xs:element name="PhysicsType" type="ActorTypeDataPhysicsType" minOccurs="0"/>
+			<xs:element name="AIType" type="ActorTypeDataAIType" minOccurs="0"/>
+			<xs:element name="BoundsType" type="ActorTypeDataBoundsType" minOccurs="0"/>
+			<xs:element name="IdleKeyframes" type="ActorTypeDataIdleKeyframes" minOccurs="0"/>
+			<xs:element name="CrouchIdleKeyframes" type="ActorTypeDataCrouchIdleKeyframes" minOccurs="0"/>
+			<xs:element name="WalkKeyframes" type="ActorTypeDataWalkKeyframes" minOccurs="0"/>
+			<xs:element name="CrouchWalkKeyframes" type="ActorTypeDataCrouchWalkKeyframes" minOccurs="0"/>
+			<xs:element name="CanBreatheUnderWater" type="ActorTypeDataCanBreatheUnderWater" minOccurs="0"/>
+			<xs:element name="EyeOffset" type="ActorTypeDataEyeOffset" minOccurs="0"/>
+			<xs:element name="FireResistance" type="ActorTypeDataFireResistance" minOccurs="0"/>
+			<xs:element name="HandMaxHit" type="ActorTypeDataHandMaxHit" minOccurs="0"/>
+			<xs:element name="HasNameplate" type="ActorTypeDataHasNameplate" minOccurs="0"/>
+			<xs:element name="IceResistance" type="ActorTypeDataIceResistance" minOccurs="0"/>
+			<xs:element name="IsFemale" type="ActorTypeDataIsFemale" minOccurs="0"/>
+			<xs:element name="IsImmuneToSpikes" type="ActorTypeDataIsImmuneToSpikes" minOccurs="0"/>
+			<xs:element name="IsMobile" type="ActorTypeDataIsMobile" minOccurs="0"/>
+			<xs:element name="IsPassive" type="ActorTypeDataIsPassive" minOccurs="0"/>
+			<xs:element name="IsValid" type="ActorTypeDataIsValid" minOccurs="0"/>
+			<xs:element name="ItemModelOffset" type="ActorTypeDataItemModelOffset" minOccurs="0"/>
+			<xs:element name="ModelHeight" type="ActorTypeDataModelHeight" minOccurs="0"/>
+			<xs:element name="ModelYRotation" type="ActorTypeDataModelYRotation" minOccurs="0"/>
+			<xs:element name="Name" type="ActorTypeDataName" minOccurs="0"/>
+			<xs:element name="NameArticle" type="ActorTypeDataNameArticle" minOccurs="0"/>
+			<xs:element name="NaturalBehaviour" type="ActorTypeDataNaturalBehaviour" minOccurs="0"/>
+			<xs:element name="NPCText" type="ActorTypeDataNPCText" minOccurs="0"/>
+			<xs:element name="ShowHitboxes" type="ActorTypeDataShowHitboxes" minOccurs="0"/>
+			<xs:element name="StrikePointOffset" type="ActorTypeDataStrikePointOffset" minOccurs="0"/>
+
+			<xs:element name="ExplodeBlocksRatio" type="ActorTypeDataExplodeBlocksRatio" minOccurs="0"/>
+			<xs:element name="ExplodeBlocksScale" type="ActorTypeDataExplodeBlocksScale" minOccurs="0"/>
+
+			<xs:element name="LootTable" type="LootTable" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Loot Table for the NPC upon death.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<!-- depreciated -->
+			<xs:element name="BoxOffset" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `BoundsType` and the `ActorBoundsDataXML` system.</xs:appinfo>
+					<xs:documentation>Unused Actor Type Component Data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BoxOffsetCrouch" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `BoundsType` and the `ActorBoundsDataXML` system.</xs:appinfo>
+					<xs:documentation>Unused Actor Type Component Data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BoxScale" type="Vector2Optional" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `BoundsType` and the `ActorBoundsDataXML` system.</xs:appinfo>
+					<xs:documentation>Unused Actor Type Component Data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BoxScaleCrouch" type="Vector2Optional" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `BoundsType` and the `ActorBoundsDataXML` system.</xs:appinfo>
+					<xs:documentation>Unused Actor Type Component Data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CriticalBoxOffset" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `BoundsType` and the `ActorBoundsDataXML` system.</xs:appinfo>
+					<xs:documentation>Unused Actor Type Component Data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CriticalBoxOffsetCrouch" type="xs:decimal" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `BoundsType` and the `ActorBoundsDataXML` system.</xs:appinfo>
+					<xs:documentation>Unused Actor Type Component Data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CriticalBoxScale" type="Vector2Optional" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `BoundsType` and the `ActorBoundsDataXML` system.</xs:appinfo>
+					<xs:documentation>Unused Actor Type Component Data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CriticalBoxScaleCrouch" type="Vector2Optional" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>**Depreciated** as of `v2.31.1.3154`. Replaced with `BoundsType` and the `ActorBoundsDataXML` system.</xs:appinfo>
+					<xs:documentation>Unused Actor Type Component Data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="ComName" type="ActorTypeDataComName" minOccurs="0"/>
+			<xs:element name="ComNameWalk" type="ActorTypeDataComNameWalk" minOccurs="0"/>
+			<xs:element name="IsImmuneToFire" type="ActorTypeDataIsImmuneToFire" minOccurs="0"/>
+			<xs:element name="NaturalSpawnFreq" type="ActorTypeDataNaturalSpawnFreq" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfActorTypeDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ActorTypeDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ActorTypeDataXML" type="ActorTypeDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="AmbientSoundXML">
+		<xs:annotation>
+			<xs:documentation>Vanilla Ambient Sound that allows for the usage of sound effects in the Ambient Sound Block and through scripting.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="CueName" type="AmbientSoundCueName" minOccurs="0"/>
+			<xs:element name="Name" type="AmbientSoundName" minOccurs="0"/>
+			<xs:element name="IsValid" type="AmbientSoundIsValid" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfAmbientSoundXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `AmbientSoundXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AmbientSoundXML" type="AmbientSoundXML" minOccurs="1" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
 
@@ -1363,8 +1918,25 @@
 		</xs:sequence>
 	</xs:complexType>
 
+	<!-- modded elements -->
+	<xs:element name="ArrayOfItemXML" type="ArrayOfItemXML"/>
+	<xs:element name="ArrayOfModActorAIDataXML" type="ArrayOfModActorAIDataXML"/>
+	<xs:element name="ArrayOfModActorAudioDataXML" type="ArrayOfModActorAudioDataXML"/>
+	<xs:element name="ArrayOfModActorBoundsDataXML" type="ArrayOfModActorBoundsDataXML"/>
+	<xs:element name="ArrayOfModActorLevelDataXML" type="ArrayOfModActorLevelDataXML"/>
+	<xs:element name="ArrayOfModActorPhysicsDataXML" type="ArrayOfModActorPhysicsDataXML"/>
+	<xs:element name="ArrayOfModActorTypeDataXML" type="ArrayOfModActorTypeDataXML"/>
+	<xs:element name="ArrayOfModDeathMessageXML" type="ArrayOfModDeathMessageXML"/>
+	<xs:element name="ArrayOfModSpawnRuleXML" type="ArrayOfModSpawnRuleXML"/>
+	<xs:element name="ModInfoXML" type="ModInfoXML"/>
+
+	<!-- vanilla elements -->
 	<xs:element name="ArrayOfActorAIDataXML" type="ArrayOfActorAIDataXML"/>
+	<xs:element name="ArrayOfActorAudioDataXML" type="ArrayOfActorAudioDataXML"/>
+	<xs:element name="ArrayOfActorLevelDataXML" type="ArrayOfActorLevelDataXML"/>
 	<xs:element name="ArrayOfActorPhysicsDataXML" type="ArrayOfActorPhysicsDataXML"/>
+	<xs:element name="ArrayOfActorTypeDataXML" type="ArrayOfActorTypeDataXML"/>
+	<xs:element name="ArrayOfAmbientSoundXML" type="ArrayOfAmbientSoundXML"/>
 	<xs:element name="ArrayOfDeathMessageXML" type="ArrayOfDeathMessageXML"/>
 	<xs:element name="ArrayOfPlaylistXML" type="ArrayOfPlaylistXML"/>
 	<xs:element name="ArrayOfSpawnRuleXML" type="ArrayOfSpawnRuleXML"/>

@@ -2,7 +2,6 @@
 
 A XML Schema file made for Total Miner. Works for both vanilla and modded elements.
 
-
 ## Implementation
 
 When making your XML file, do this to reference the Schema:
