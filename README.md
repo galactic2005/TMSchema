@@ -21,6 +21,9 @@ Currently the Schema has support for the following modded elements:
 
 * `ArrayOfItemXML`
 * `ArrayOfModActorAIDataXML`
+* `ArrayOfModActorAudioDataXML`
+* `ArrayOfModActorBoundsDataXML`
+* `ArrayOfModActorLevelDataXML`
 * `ArrayOfModActorPhysicsDataXML`
 * `ArrayOfModActorTypeDataXML`
 * `ArrayOfModDeathMessageXML`
@@ -31,7 +34,11 @@ Currently the Schema has support for the following modded elements:
 Currently the Schema has support for the following vanilla elements:
 
 * `ArrayOfActorAIDataXML`
+* `ArrayOfActorAudioDataXML`
+* `ArrayOfActorLevelDataXML`
 * `ArrayOfActorPhysicsDataXML`
+* `ArrayOfActorTypeDataXML`
+* `ArrayOfAmbientSoundXML`
 * `ArrayOfDeathMessageXML`
 * `ArrayOfPlaylistXML`
 * `ArrayOfSpawnRuleXML`
