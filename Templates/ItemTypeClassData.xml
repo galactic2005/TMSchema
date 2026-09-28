@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/galactic2005/TMSchema/refs/heads/main/TMSchema.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<ArrayOfModItemTypeClassDataXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ModItemTypeClassDataXML>
+        <ClassID>ExampleClass</ClassID>
+        <Power>750</Power>
+        <MaxResistance>4200</MaxResistance>
+    </ModItemTypeClassDataXML>
+</ArrayOfModItemTypeClassDataXML>
