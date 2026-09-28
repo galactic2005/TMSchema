@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/galactic2005/TMSchema/refs/heads/main/TMSchema.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<ArrayOfModItemCombatDataXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ModItemCombatDataXML>
+        <ItemID>ExampleItem</ItemID>
+        <Health>0</Health>
+        <Attack>0</Attack>
+        <Strength>0</Strength>
+        <Defence>0</Defence>
+        <Ranged>0</Ranged>
+        <Magic>0</Magic>
+        <Looting>0</Looting>
+    </ModItemCombatDataXML>
+</ArrayOfModItemCombatDataXML>

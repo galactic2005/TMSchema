@@ -38,7 +38,7 @@
 		<ModelYRotation>0</ModelYRotation>
 
 		<!-- Actor Type data -->
-		<CanBreatheUnderwater>false</CanBreatheUnderwater>
+		<CanBreatheUnderWater>false</CanBreatheUnderWater>
 		<HasNameplate>true</HasNameplate>
 		<IsFemale>false</IsFemale>
 		<IsImmuneToSpikes>false</IsImmuneToSpikes>

@@ -19,26 +19,45 @@ When making your XML file, do this to reference the Schema:
 
 Currently the Schema has support for the following modded elements:
 
-* `ArrayOfItemXML`
+#### Modded Actors
+
 * `ArrayOfModActorAIDataXML`
 * `ArrayOfModActorAudioDataXML`
 * `ArrayOfModActorBoundsDataXML`
 * `ArrayOfModActorLevelDataXML`
 * `ArrayOfModActorPhysicsDataXML`
 * `ArrayOfModActorTypeDataXML`
-* `ArrayOfModDeathMessageXML`
 * `ArrayOfModSpawnRuleXML`
+
+#### Modded Items
+
+* `ArrayOfItemXML`
+* `ArrayOfModItemCombatDataXML`
+* `ArrayOfModItemDataXML`
+
+#### Other Modded XMLs
+
+* `ArrayOfModDeathMessageXML`
 
 ### Vanilla Elements
 
 Currently the Schema has support for the following vanilla elements:
+
+#### Vanilla Actors
 
 * `ArrayOfActorAIDataXML`
 * `ArrayOfActorAudioDataXML`
 * `ArrayOfActorLevelDataXML`
 * `ArrayOfActorPhysicsDataXML`
 * `ArrayOfActorTypeDataXML`
+* `ArrayOfSpawnRuleXML`
+
+#### Vanilla Items
+
+* `ArrayOfItemCombatDataXML`
+
+#### Other Vanilla XMLs
+
 * `ArrayOfAmbientSoundXML`
 * `ArrayOfDeathMessageXML`
 * `ArrayOfPlaylistXML`
-* `ArrayOfSpawnRuleXML`

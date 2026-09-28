@@ -89,6 +89,13 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:simpleType name="ColorInteger">
+		<xs:restriction base="xs:nonNegativeInteger">
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:simpleType name="ComName">
 		<xs:annotation>
 			<xs:documentation>The name of a Component file. Does not need file extension.</xs:documentation>
@@ -686,6 +693,98 @@
 		</xs:annotation>
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
+
+	<xs:simpleType name="ItemCombatDataAttack">
+		<xs:annotation>
+			<xs:documentation>The Attack Combat Stats bonus of the item. Every 100 bonuses equals to 1 level of the Attack skill.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemCombatDataDefence">
+		<xs:annotation>
+			<xs:documentation>The Defence Combat Stats bonus of the item. Every 100 bonuses equals to 1 level of the Defence skill.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemCombatDataHealth">
+		<xs:annotation>
+			<xs:documentation>The Health Combat Stats bonus of the item. Every 100 bonuses equals to 1 level of the Health skill.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemCombatDataLooting">
+		<xs:annotation>
+			<xs:documentation>The Looting Combat Stats bonus of the item. Every 100 bonuses equals to 1 level of the Looting skill.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemCombatDataMagic">
+		<xs:annotation>
+			<xs:documentation>Seemingly unused Combat Stat.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemCombatDataRanged">
+		<xs:annotation>
+			<xs:documentation>The Ranged Combat Stats bonus of the item. Every 100 bonuses equals to 1 level of the Ranged skill.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemCombatDataStrength">
+		<xs:annotation>
+			<xs:documentation>The Strength Combat Stats bonus of the item. Every 100 bonuses equals to 1 level of the Strength skill.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemDataItemID">
+		<xs:annotation>
+			<xs:documentation>The ID of the item.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemRarityDataRarityType">
+		<xs:annotation>
+			<xs:documentation>The ID of the item rarity.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemRarityDataName">
+		<xs:annotation>
+			<xs:documentation>The name of the item rarity shown in-game.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:complexType name="ItemRarityDataModdedColor">
+		<xs:annotation>
+			<xs:appinfo>`<![CDATA[&lt;Color R="ColorInteger" G="ColorInteger" B="ColorInteger"/&gt;]]>`</xs:appinfo>
+			<xs:documentation>The color of the item rarity in-game.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="R" type="ColorInteger" use="required">
+			<xs:annotation>
+				<xs:documentation>An integer between 0 to 255 that represents Red.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="G" type="ColorInteger" use="required">
+			<xs:annotation>
+				<xs:documentation>An integer between 0 to 255 that represents Green.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="B" type="ColorInteger" use="required">
+			<xs:annotation>
+				<xs:documentation>An integer between 0 to 255 that represents Blue.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
 
 	<xs:complexType name="ModInfoXMLVersion">
 		<xs:annotation>
@@ -1519,6 +1618,51 @@
 		</xs:sequence>
 	</xs:complexType>
 
+	<xs:complexType name="ModItemCombatDataXML">
+		<xs:annotation>
+			<xs:documentation>Modded Item Combat Data that allows for customizable vanilla or modded Item Combat Data.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ItemID" type="ItemDataItemID" minOccurs="1"/>
+			<xs:element name="Health" type="ItemCombatDataHealth" minOccurs="0"/>
+			<xs:element name="Attack" type="ItemCombatDataAttack" minOccurs="0"/>
+			<xs:element name="Strength" type="ItemCombatDataStrength" minOccurs="0"/>
+			<xs:element name="Defence" type="ItemCombatDataDefence" minOccurs="0"/>
+			<xs:element name="Ranged" type="ItemCombatDataRanged" minOccurs="0"/>
+			<xs:element name="Magic" type="ItemCombatDataMagic" minOccurs="0"/>
+			<xs:element name="Looting" type="ItemCombatDataLooting" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfModItemCombatDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ModItemCombatDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ModItemCombatDataXML" type="ModItemCombatDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ModItemRarityDataXML">
+		<xs:annotation>
+			<xs:documentation>Modded Item Rarity Data that allows for customizable vanilla or modded Item Rarity Data.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="RarityType" type="ItemRarityDataRarityType" minOccurs="1"/>
+			<xs:element name="Name" type="ItemRarityDataName" minOccurs="0"/>
+			<xs:element name="Color" type="ItemRarityDataModdedColor" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfModItemRarityDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ModItemRarityDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ModItemRarityDataXML" type="ModItemRarityDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
 	<xs:complexType name="ModSpawnRuleXML">
 		<xs:annotation>
 			<xs:appinfo>`<![CDATA[&lt;ModSpawnRuleXML ID="SpawnRuleIDString"&gt;]]>`</xs:appinfo>
@@ -1868,6 +2012,31 @@
 		</xs:sequence>
 	</xs:complexType>
 
+	<xs:complexType name="ItemCombatDataXML">
+		<xs:annotation>
+			<xs:documentation>Modded Item Combat Data that allows for customizable vanilla Item Combat Data.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ItemID" type="ItemDataItemID" minOccurs="1"/>
+			<xs:element name="Health" type="ItemCombatDataHealth" minOccurs="0"/>
+			<xs:element name="Attack" type="ItemCombatDataAttack" minOccurs="0"/>
+			<xs:element name="Strength" type="ItemCombatDataStrength" minOccurs="0"/>
+			<xs:element name="Defence" type="ItemCombatDataDefence" minOccurs="0"/>
+			<xs:element name="Ranged" type="ItemCombatDataRanged" minOccurs="0"/>
+			<xs:element name="Magic" type="ItemCombatDataMagic" minOccurs="0"/>
+			<xs:element name="Looting" type="ItemCombatDataLooting" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfItemCombatDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ItemCombatDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ItemCombatDataXML" type="ItemCombatDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
 	<xs:complexType name="PlaylistXML">
 		<xs:annotation>
 			<xs:documentation>Vanilla Playlists that allows for customizable music playlists.</xs:documentation>
@@ -1927,6 +2096,8 @@
 	<xs:element name="ArrayOfModActorPhysicsDataXML" type="ArrayOfModActorPhysicsDataXML"/>
 	<xs:element name="ArrayOfModActorTypeDataXML" type="ArrayOfModActorTypeDataXML"/>
 	<xs:element name="ArrayOfModDeathMessageXML" type="ArrayOfModDeathMessageXML"/>
+	<xs:element name="ArrayOfModItemCombatDataXML" type="ArrayOfModItemCombatDataXML"/>
+	<xs:element name="ArrayOfModItemRarityDataXML" type="ArrayOfModItemRarityDataXML"/>
 	<xs:element name="ArrayOfModSpawnRuleXML" type="ArrayOfModSpawnRuleXML"/>
 	<xs:element name="ModInfoXML" type="ModInfoXML"/>
 
@@ -1938,6 +2109,7 @@
 	<xs:element name="ArrayOfActorTypeDataXML" type="ArrayOfActorTypeDataXML"/>
 	<xs:element name="ArrayOfAmbientSoundXML" type="ArrayOfAmbientSoundXML"/>
 	<xs:element name="ArrayOfDeathMessageXML" type="ArrayOfDeathMessageXML"/>
+	<xs:element name="ArrayOfItemCombatDataXML" type="ArrayOfItemCombatDataXML"/>
 	<xs:element name="ArrayOfPlaylistXML" type="ArrayOfPlaylistXML"/>
 	<xs:element name="ArrayOfSpawnRuleXML" type="ArrayOfSpawnRuleXML"/>
 </xs:schema>
