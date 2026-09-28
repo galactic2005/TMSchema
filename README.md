@@ -33,7 +33,8 @@ Currently the Schema has support for the following modded elements:
 
 * `ArrayOfItemXML`
 * `ArrayOfModItemCombatDataXML`
-* `ArrayOfModItemDataXML`
+* `ArrayOfModItemRarityDataXML`
+* `ArrayOfModItemTypeClassDataXML`
 
 #### Other Modded XMLs
 
@@ -55,6 +56,7 @@ Currently the Schema has support for the following vanilla elements:
 #### Vanilla Items
 
 * `ArrayOfItemCombatDataXML`
+* `ArrayOfItemTypeClassDataXML`
 
 #### Other Vanilla XMLs
 

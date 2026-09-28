@@ -4,6 +4,8 @@
 <ArrayOfModItemCombatDataXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <ModItemCombatDataXML>
         <ItemID>ExampleItem</ItemID>
+
+        <!-- Item Combat Bonuses data -->
         <Health>0</Health>
         <Attack>0</Attack>
         <Strength>0</Strength>

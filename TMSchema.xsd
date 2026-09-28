@@ -786,6 +786,27 @@
 		</xs:attribute>
 	</xs:complexType>
 
+	<xs:simpleType name="ItemTypeClassDataClassID">
+		<xs:annotation>
+			<xs:documentation>The ID of the type class.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemTypeClassDataPower">
+		<xs:annotation>
+			<xs:documentation>The power level of the item, or the amount of "damage" it deals to a block. A block's "health" is its Resistance.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemTypeClassDataMaxResistance">
+		<xs:annotation>
+			<xs:documentation>The maximum amount of Resistance a block may have to be broken by this item. If a block has more Resistance than this value, then the block cannot be broken by the item.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
 	<xs:complexType name="ModInfoXMLVersion">
 		<xs:annotation>
 			<xs:documentation>The version of the mod shown in-game. If not used or is missing any of the child elements, it will be shown as version `1.0.0`. Uses <a href="https://semver.org/">Systemic Versioning</a>.</xs:documentation>
@@ -1663,6 +1684,26 @@
 		</xs:sequence>
 	</xs:complexType>
 
+	<xs:complexType name="ModItemTypeClassDataXML">
+		<xs:annotation>
+			<xs:documentation>Modded Item Type Class Data that allows for customizable vanilla or modded Item Type Class Data.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ClassID" type="ItemTypeClassDataClassID" minOccurs="1"/>
+			<xs:element name="Power" type="ItemTypeClassDataPower" minOccurs="0"/>
+			<xs:element name="MaxResistance" type="ItemTypeClassDataMaxResistance" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfModItemTypeClassDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ModItemTypeClassDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ModItemTypeClassDataXML" type="ModItemTypeClassDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
 	<xs:complexType name="ModSpawnRuleXML">
 		<xs:annotation>
 			<xs:appinfo>`<![CDATA[&lt;ModSpawnRuleXML ID="SpawnRuleIDString"&gt;]]>`</xs:appinfo>
@@ -2037,6 +2078,26 @@
 		</xs:sequence>
 	</xs:complexType>
 
+	<xs:complexType name="ItemTypeClassDataXML">
+		<xs:annotation>
+			<xs:documentation>Modded Item Type Class Data that allows for customizable vanilla Item Type Class Data.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ClassID" type="ItemTypeClassDataClassID" minOccurs="1"/>
+			<xs:element name="Power" type="ItemTypeClassDataPower" minOccurs="0"/>
+			<xs:element name="MaxResistance" type="ItemTypeClassDataMaxResistance" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfItemTypeClassDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ItemTypeClassDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ItemTypeClassDataXML" type="ItemTypeClassDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
 	<xs:complexType name="PlaylistXML">
 		<xs:annotation>
 			<xs:documentation>Vanilla Playlists that allows for customizable music playlists.</xs:documentation>
@@ -2098,6 +2159,7 @@
 	<xs:element name="ArrayOfModDeathMessageXML" type="ArrayOfModDeathMessageXML"/>
 	<xs:element name="ArrayOfModItemCombatDataXML" type="ArrayOfModItemCombatDataXML"/>
 	<xs:element name="ArrayOfModItemRarityDataXML" type="ArrayOfModItemRarityDataXML"/>
+	<xs:element name="ArrayOfModItemTypeClassDataXML" type="ArrayOfModItemTypeClassDataXML"/>
 	<xs:element name="ArrayOfModSpawnRuleXML" type="ArrayOfModSpawnRuleXML"/>
 	<xs:element name="ModInfoXML" type="ModInfoXML"/>
 
@@ -2110,6 +2172,7 @@
 	<xs:element name="ArrayOfAmbientSoundXML" type="ArrayOfAmbientSoundXML"/>
 	<xs:element name="ArrayOfDeathMessageXML" type="ArrayOfDeathMessageXML"/>
 	<xs:element name="ArrayOfItemCombatDataXML" type="ArrayOfItemCombatDataXML"/>
+	<xs:element name="ArrayOfItemTypeClassDataXML" type="ArrayOfItemTypeClassDataXML"/>
 	<xs:element name="ArrayOfPlaylistXML" type="ArrayOfPlaylistXML"/>
 	<xs:element name="ArrayOfSpawnRuleXML" type="ArrayOfSpawnRuleXML"/>
 </xs:schema>
