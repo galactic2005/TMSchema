@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/galactic2005/TMSchema/refs/heads/main/TMSchema.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<ArrayOfModActorAudioDataXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ModActorAudioDataXML>
+        <ActorType>ActorType</ActorType>
+        <AudioPain>SpiderPain</AudioPain>
+        <AudioStrike>SpiderWarning</AudioStrike>
+        <AudioWarning>SpiderWarning</AudioWarning>
+        <AudioDeath>SpiderDeath</AudioDeath>
+    </ModActorAudioDataXML>
+</ArrayOfModActorAudioDataXML>

@@ -715,6 +715,13 @@
 		<xs:restriction base="xs:integer"/>
 	</xs:simpleType>
 
+	<xs:simpleType name="ItemCombatDataItemID">
+		<xs:annotation>
+			<xs:documentation>The ID of the item.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="NonEmptyString"/>
+	</xs:simpleType>
+
 	<xs:simpleType name="ItemCombatDataLooting">
 		<xs:annotation>
 			<xs:documentation>The Looting Combat Stats bonus of the item. Every 100 bonuses equals to 1 level of the Looting skill.</xs:documentation>
@@ -741,13 +748,6 @@
 			<xs:documentation>The Strength Combat Stats bonus of the item. Every 100 bonuses equals to 1 level of the Strength skill.</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:integer"/>
-	</xs:simpleType>
-
-	<xs:simpleType name="ItemDataItemID">
-		<xs:annotation>
-			<xs:documentation>The ID of the item.</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
 
 	<xs:simpleType name="ItemRarityDataRarityType">
@@ -786,25 +786,48 @@
 		</xs:attribute>
 	</xs:complexType>
 
-	<xs:simpleType name="ItemTypeClassDataClassID">
-		<xs:annotation>
-			<xs:documentation>The ID of the type class.</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string"/>
-	</xs:simpleType>
-
 	<xs:simpleType name="ItemTypeClassDataPower">
 		<xs:annotation>
 			<xs:documentation>The power level of the item, or the amount of "damage" it deals to a block. A block's "health" is its Resistance.</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string"/>
+		<xs:restriction base="xs:nonNegativeInteger"/>
 	</xs:simpleType>
 
 	<xs:simpleType name="ItemTypeClassDataMaxResistance">
 		<xs:annotation>
 			<xs:documentation>The maximum amount of Resistance a block may have to be broken by this item. If a block has more Resistance than this value, then the block cannot be broken by the item.</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string"/>
+		<xs:restriction base="xs:nonNegativeInteger"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemTypeDataItemID">
+		<xs:annotation>
+			<xs:documentation>The Item ID of the item the Item Type Data should apply to.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="NonEmptyString"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ItemTypeDataUse">
+		<xs:annotation>
+			<xs:documentation>How the item is used in gameplay.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="NonEmptyString">
+			<xs:enumeration value="Block">
+				<xs:annotation>
+					<xs:documentation>The item is used like a Block.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Item">
+				<xs:annotation>
+					<xs:documentation>The item is used like a Item.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="None">
+				<xs:annotation>
+					<xs:documentation>The item isn't used like a Block or Item.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
 	</xs:simpleType>
 
 	<xs:complexType name="ModInfoXMLVersion">
@@ -1644,7 +1667,7 @@
 			<xs:documentation>Modded Item Combat Data that allows for customizable vanilla or modded Item Combat Data.</xs:documentation>
 		</xs:annotation>
 		<xs:all>
-			<xs:element name="ItemID" type="ItemDataItemID" minOccurs="1"/>
+			<xs:element name="ItemID" type="ItemCombatDataItemID" minOccurs="1"/>
 			<xs:element name="Health" type="ItemCombatDataHealth" minOccurs="0"/>
 			<xs:element name="Attack" type="ItemCombatDataAttack" minOccurs="0"/>
 			<xs:element name="Strength" type="ItemCombatDataStrength" minOccurs="0"/>
@@ -1689,7 +1712,11 @@
 			<xs:documentation>Modded Item Type Class Data that allows for customizable vanilla or modded Item Type Class Data.</xs:documentation>
 		</xs:annotation>
 		<xs:all>
-			<xs:element name="ClassID" type="ItemTypeClassDataClassID" minOccurs="1"/>
+			<xs:element name="ClassID" type="NonEmptyString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the `ModItemTypeClassDataXML`. If the `ID` is not unique, it'll overwrite the Item Type Class Data with the same `ID`.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="Power" type="ItemTypeClassDataPower" minOccurs="0"/>
 			<xs:element name="MaxResistance" type="ItemTypeClassDataMaxResistance" minOccurs="0"/>
 		</xs:all>
@@ -2055,10 +2082,10 @@
 
 	<xs:complexType name="ItemCombatDataXML">
 		<xs:annotation>
-			<xs:documentation>Modded Item Combat Data that allows for customizable vanilla Item Combat Data.</xs:documentation>
+			<xs:documentation>Vanilla Item Combat Data that allows for customizable vanilla Item Combat Data.</xs:documentation>
 		</xs:annotation>
 		<xs:all>
-			<xs:element name="ItemID" type="ItemDataItemID" minOccurs="1"/>
+			<xs:element name="ItemID" type="ItemCombatDataItemID" minOccurs="1"/>
 			<xs:element name="Health" type="ItemCombatDataHealth" minOccurs="0"/>
 			<xs:element name="Attack" type="ItemCombatDataAttack" minOccurs="0"/>
 			<xs:element name="Strength" type="ItemCombatDataStrength" minOccurs="0"/>
@@ -2080,10 +2107,14 @@
 
 	<xs:complexType name="ItemTypeClassDataXML">
 		<xs:annotation>
-			<xs:documentation>Modded Item Type Class Data that allows for customizable vanilla Item Type Class Data.</xs:documentation>
+			<xs:documentation>Vanilla Item Type Class Data that allows for customizable vanilla Item Type Class Data.</xs:documentation>
 		</xs:annotation>
 		<xs:all>
-			<xs:element name="ClassID" type="ItemTypeClassDataClassID" minOccurs="1"/>
+			<xs:element name="ClassID" type="NonEmptyString" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ID of the `ItemTypeClassDataXML`. If the `ID` is not unique, it'll overwrite the Item Type Class Data with the same `ID`.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="Power" type="ItemTypeClassDataPower" minOccurs="0"/>
 			<xs:element name="MaxResistance" type="ItemTypeClassDataMaxResistance" minOccurs="0"/>
 		</xs:all>
@@ -2095,6 +2126,25 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="ItemTypeClassDataXML" type="ItemTypeClassDataXML" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ItemTypeDataXML">
+		<xs:annotation>
+			<xs:documentation>Vanilla Item Type Data that allows for customizable vanilla Item Type Data.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ItemID" type="ItemTypeDataItemID" minOccurs="1"/>
+			<xs:element name="Use" type="ItemTypeDataUse" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ArrayOfItemTypeDataXML">
+		<xs:annotation>
+			<xs:documentation>An array that contains one or more of `ItemTypeDataXML`.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ItemTypeDataXML" type="ItemTypeDataXML" minOccurs="1" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
 
